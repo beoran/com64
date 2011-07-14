@@ -1,0 +1,1 @@
+gcc main.c -I /usr/include/SDL -lSDL -o main
