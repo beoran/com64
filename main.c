@@ -10,6 +10,7 @@ int main(void) {
   puts("Hello world!");
   // Start SDL
   SDL_Init(SDL_INIT_EVERYTHING);
+  screen = SDL_SetVideoMode(640, 480, 0, SDL_HWSURFACE | SDL_ANYFORMAT);
   
   // Quit SDL
   SDL_Quit(); 
