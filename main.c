@@ -32,11 +32,18 @@ int main(void) {
   int b = 0;
   SDL_Surface * screen        = NULL;
   SDL_Surface * sprites[MAX_SPRITES];
-  SDL_Surface * player_sprite = NULL; 
+  SDL_Surface * player_sprite = NULL;
+  int jones; 
+  int * pointer_to_jones; 
+  jones            = 127; 
+  pointer_to_jones = &jones;
+  
+  printf("jones: %d, pointer to jones: %p\n", jones, pointer_to_jones);
+   
   // Friendly message.
   puts("Hello world!");
   b = by_value(a);
-  printf("a: %d, b:%d \n", a, b);
+  printf("a: %d, b:%d, address of a: %p\n", a, b, &a);
   b = by_address(&a);
   printf("a: %d, b:%d \n", a, b);  
   
@@ -56,7 +63,8 @@ int main(void) {
         done = TRUE;
       break;
       default: /* Report an unhandled event */
-        printf("I don't know what this event is!\n");
+        ;
+        // printf("I don't know what this event is!\n");
       }
     }
   }

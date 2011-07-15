@@ -134,4 +134,190 @@ Chat transcript:
 08:40 beoran  when you #include<SDL.h>, the SDL_video.h gets included indirectly, and the #define you see there take effect
 08:41 beoran  you may ask, what's the point of making names for integer constants like that, but 1) it clarifies what the integer means, and 2 you can change the value of the integer later if needed
 08:41 beoran  that clear? :)
-
+08:33 beoran  so, #include <SDL.h> is simply a commadn tha ttells the preprocessor to include that file for us, so we can get the functions that are declared in it and the constants that are defined in it
+08:34 beoran  #include is like an automatic copy/paste, really
+08:34 com64 Okay.
+08:34 beoran  a #define FOO bar tells the preprocessor to replace FOO with bar every time it sees FOO
+08:35 beoran  as a whole. so, this kind of #define is a bit like an automatic search/replace
+08:35 com64 what about... #using namespace randomnamespace?
+08:35 com64 is that used in C?
+08:36 beoran  no, no namespaces in C
+08:36 beoran  that's added by C++
+08:37 beoran  I want to keep it simple, so plain C is nbest to start, i feel. C++ adds hundreds of features to plain C
+08:37 beoran  most of which I feel you don't need for a simple game
+08:38 beoran  once you know c well, learning C++ should be easier too ,and should let you see which features of C++ you need and which ones you odn't
+08:38 com64 okay.
+08:38 beoran  at this point it might be instructive to take a look at the file /usr/include/SDL/SDL_video.h
+08:39 beoran  you'll see a bit down from the top that there are #define SDL_HWSURFACE 0x00000001 and more #defines in there
+08:39 com64 I"m in.
+08:39 beoran  so that's where the SDL_HWSURFACE comes from
+08:40 beoran  when you #include<SDL.h>, the SDL_video.h gets included indirectly, and the #define you see there take effect
+08:41 beoran  you may ask, what's the point of making names for integer constants like that, but 1) it clarifies what the integer means, and 2 you can change the value of the integer later if needed
+08:41 beoran  that clear? :)
+08:41 com64 Yeah, makes sense to me.
+08:42 com64 Quite logical.
+08:42 beoran  good
+08:42 beoran  now back to our own program
+08:43 beoran  we've opened the screen ,and if you run the main by doing ./main ,you'll see a window briefly pop up and dissapear again
+08:43 beoran  that's of course because we open the window but don't do anything yet
+08:44 com64 I don't see any window, lol
+08:44 beoran  we should keep the window open until twe want to close it
+08:44 beoran  it should blink very fast
+08:44 com64 okay
+08:44 beoran  if you can't see it
+08:44 com64 yeah, I see nothing blinking, I'm in Ubuntu.
+08:45 com64 I'm already int he command window
+08:45 com64 hm...
+08:46 com64 yeah, it outputs in the command window.
+08:46 com64 that I already have open.
+08:46 beoran  could you do "git pull" ? I made some changes
+08:46 com64 ok
+08:46 beoran  with git pull you will pull those from my github repository
+08:47 beoran  I added a SDL_Delay after opening the window so you can see it being opened (or not)
+08:49 com64 fatal: Not a git repository (or any parent up to mount parent /home)
+08:49 com64 Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+08:49 com64 I get an error --^
+08:50 com64 wait, let me try to get into my home directory
+08:51 com64 got it
+08:51 beoran  ok good
+08:52 beoran  if you build itand run it now, you should see a window pop up for a second
+08:52 com64 ./build
+08:52 com64 whoops
+08:52 com64 wrong window lol
+08:53 com64 Okay, see it now
+08:53 beoran  good
+08:53 com64 I didn't see it before because I had my command window set to "always on top"
+08:53 com64 and it was coverint it
+08:53 beoran  d'oh :)
+08:53 com64 and it was covering it
+08:53 com64 lol
+08:53 beoran  :)
+08:53 beoran  good ,now to keep tha twindow open until we can close it
+08:54 com64 What I always did in C++ is press and hold q to quit...
+08:54 beoran  I already made some more changes, so git
+08:54 beoran  git pul lplease
+08:54 com64 k
+08:55 beoran  well, since it's a window and not full screen, I just did it using the close button on the window
+08:56 com64 I did stuff in fullscreen
+08:56 com64 usually
+08:56 beoran  well, that's nice but windowed is better to begin with. so what's new in this version? on the top i put some #ifndef TRUE #define TRUE 1 # endoif
+08:56 beoran  (ifg you hand in fllscreen mode it's difficult to get out)
+08:56 beoran  if your program hangs, I mean
+08:57 beoran  so what's #ifndef ?
+08:57 com64 guess so, but in Linux, you can use a TTY to kill the program.
+08:57 beoran  com64: sure, but it's a hassle. You can kil a window with xkill
+08:57 com64 checks something?
+08:57 beoran  yes, the #ifndef is short for if not defined
+08:57 com64 tests if something is defined.
+08:58 beoran  in plain C , booleans TRUE and FALSE may bot be defined yet. So I'm defining them if they weren't defined yet (by , say SDL)
+08:58 com64 I usually did "ps aux|grep process&&sudo kill-9 processnumber"
+08:58 com64 oh ok
+08:59 beoran  and the #endif is of course the end if the #ifndef directive
+08:59 beoran  the end of
+08:59 beoran  that clear?
+09:00 com64 I see you added SDL_Surface * player_sprite = NULL?
+09:00 com64 or I must have not seen it when you updated earlier.
+09:00 beoran  yes, that's in anticipation, though.
+09:00 com64 I also see a while loop
+09:00 beoran  more germane now, is tha tyou'll see I added a variable above the main function, namely int done;
+09:01 com64 okay.
+09:01 beoran  that variable we'll use to track if we're done with the game or not.
+09:02 beoran  note that this is a global variable, tha tmeans that all functions that are defined below it will be able to use it.
+09:02 beoran  however, we still only have one function , main, so it's only used there for now.
+09:03 beoran  and then UI added a while loop, as you remarked
+09:03 beoran  what you think the while loop will do?
+09:04 com64 While under these conditions, keep running this loop,
+09:04 com64 so in this case,
+09:04 beoran  yes ?
+09:04 com64 while the program isn't done, keep running this loop...
+09:05 beoran  good :)
+09:05 beoran  so now, on to the SDL_Event thing.
+09:05 beoran  SDL uses an "event based" input model.
+09:06 beoran  that means that whenever the user of the program does something (move the mouse, click the close button, press a key, etc, etc), SDL store s the fact that this happened in a queue
+09:06 beoran  a queue is a waiting row if you like
+09:07 beoran  and all these input "events" are being stored in the queue for us to check them and act upon.
+09:07 com64 I see.
+09:07 beoran  So we're a bit like a clerk in an office and the events are the customers waiting in row
+09:08 com64 I get it.
+09:08 beoran  let's say a post office ;p ok, good
+09:08 beoran  so, that's why we need the SDL_Event event;
+09:08 com64 I hope the post office workers don't go on strike for three weeks like they did here, and then get forced back to work by the gov't with lower pay, lmao
+09:09 beoran  com64: that sucks :p
+09:09 com64 IK
+09:09 com64 now all our mail is behind.
+09:09   *** Giroro quit (Quit: Leaving)
+09:09 com64 So we're getting mail from two weeks ago.
+09:09 beoran  so, we'll use the event variable to store the data of the events that are coming our way
+09:10 beoran  That's what SDL_PollEvent is doiing. It looks into the event queue, and stores the event in the storage area we make available to it.
+09:11 beoran  now you will wonder why we do SDL_PollEvent(&event) and not SDL_PollEvent(event)
+09:11 beoran  right ?
+09:11 com64 yeah.
+09:12 beoran  well, you see, C is quite primitive in a way
+09:12 beoran  you can't pass variables by reference
+09:12 beoran  only by value
+09:12 com64 ah.
+09:13 beoran  do you understand what pass by reference and pass by value mean?
+09:13 beoran  if not I'l lelaborate.
+09:13 com64 kind of.
+09:13 com64 elabourate, I guess..
+09:13 beoran  well, maybe I'll elaborate a bit
+09:13 com64 :)
+09:14 com64 brb; bathroom
+09:16 beoran  OK.
+09:16 beoran  please git pull again when you come back 
+09:21 beoran  please git pull again
+09:21 com64 Done.
+09:21 beoran  I added 2 functions to help explain
+09:22 beoran  the first one is by_value. Can you see what it does?
+09:22 beoran  (you may want to build and run again)
+09:23 com64 I see a lot of "I don't know what this event is!"
+09:24 beoran  sure, but on top of that?
+09:24 beoran  perhaps scroll back your console a bit
+09:24 com64 a: 2, b:12
+09:24 com64 a: 12, b:12
+09:24 beoran  exactly
+09:24 beoran  now, you understand what by_value is doing?
+09:25 com64 yeah
+09:25 beoran  as you cvan see, after calling by_value , it's argument , a remains the same
+09:25 com64 a = a + 10 means that it's adding 10b to a
+09:25 beoran  yes, iside the function we change a.
+09:25 beoran  but since a is passed by value, , we only get a copy of the value in a
+09:26 com64 in C++, you'd usually use decimals instead of binary.
+09:26 com64 I think...
+09:26 beoran  in the main program
+09:26 beoran  ah, no, the 10 is not binary, it's decimal :)
+09:26 beoran  just like in c++, really
+09:26 com64 oh, really
+09:26 beoran  sorry, I should ahave used 7 or so :)
+09:26 com64 lol
+09:27 beoran  the value of 10 is not important, it's what happens to a :)
+09:27 com64 Ok
+09:27 beoran  as you vca nsee, a is changed inside by_value
+09:27 beoran  but once the function by_value is done, it's as if this change never happened (in main)
+09:28 beoran  that's why the first output is a: 2, b:12;
+09:28 com64 Oh, I see.
+09:28 beoran  the function by_value only gets *the value of* a passed to it
+09:28 com64 I get it.
+09:28 beoran  ok
+09:29 beoran  In C, that's the *only* way to pass variables.
+09:29 beoran  But what about by_address then?
+09:29 beoran  well, in C, if you /want/ a function to change a variable yiu pass to it, you have to do it by passing the address of the variable
+09:29 com64 I don't remember what the * does.
+09:30 beoran  ok, let me explain addresses (or pointers) a bit then :)
+09:30 beoran  as you know, when you do int a = 2; in your main function you're defining a variable.
+09:30 beoran  what happens when the program is run?
+09:31 beoran  the compiler makes it so tha tsome space in the memory of your computer is reserved for the variable a
+09:31 beoran  whenever you use a in main, that space is used
+09:31 beoran  to go back to the postal office metaphor, imagine computer memory to be a large wall full of postal boxes
+09:32 beoran  the CPU is like the mailman that puts letters(data) inside the postal boxes
+09:32 com64 That's how I see it anyway, except I imagine it like keys hung on a wall.
+09:33 beoran  ah, like in a hotell? that's also a nice metaphor.
+09:33 com64 yeah.
+09:33 beoran  so what's an address? well it's just a number by which the CPU knows /which/ place in memory iyt is exactly
+09:34 beoran  if you want to see what that number is
+09:35 beoran  printf("a: %d, b:%d, address of a: %p\n", a, b, &a);
+09:35 beoran  put the above somewhere in the main of program :)
+09:36 beoran  you see, in C the & operator, when used ob n a single variable, is the "address of" operator
+09:36 beoran  the %p is to tell printf that you want to display an address
+09:37 beoran  and &a means"the address of a"
+09:37 beoran  you with me so far? 
