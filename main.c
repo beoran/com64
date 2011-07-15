@@ -23,7 +23,7 @@ int by_value(int a) {
 /* A function that passes it's argument by address . */
 int by_address(int * a) { 
   // (*a) = (*a) + 10;
-  printf("In by_address: a: %p\n", a);
+  printf("In by_address: a: %p, (*a): %i\n", a, *a);
   (*a) = 10; 
   return (*a); 
 }   
