@@ -3,443 +3,733 @@ This is a turtorial for game programming in C using SDL.
 
 Chat transcript:
 
-08:04 beoran  Perhaps I should teach you about github and git a bit first
-08:04 com64 I'll try to make cheesey Gates of Zendocon style explosions...
-08:04 com64 sure
-08:04 beoran  github is a popular web site to host your source code of your programs
-08:04 com64 ah.
-08:05 beoran  I've hosted the tutorial there https://github.com/beoran/com64
-08:05 beoran  now, if you want to work with someone's source code, you have to get it somehow
-08:05 beoran  github, as the name says, is based on the program git
-08:05 com64 git command, amirite?
-08:05 beoran  yes :)
-08:05 beoran  so what's git do?
-08:06 com64 it gits srouce code.
-08:06 com64 :D
-08:06 com64 lol
-08:06 beoran  well, it's a source control or revision control program
-08:06 beoran  com64: yes, that too actually
-08:07 beoran  more crucially, though it helps you 1) keep previous versions of your source code 2) it helps you communicate with other developers
-08:07 com64 I remember using either GIT or SVN for something in Linux Mint...
-08:07 com64 I can't remember what I needed, though.
-08:08 beoran  git works with the concept of repositories
-08:08 beoran  basically a repository is a single project
-08:08 beoran  so, github hosts several of my projects/repositories
-08:09 beoran  now for you to get a copy of my repository on github, you'll have to clone it
-08:09 beoran  to do that , you go "git clone https://github.com/beoran/com64.git"
-08:10 beoran  (you can see the url you need on top of the page in https://github.com/beoran/com64)
-08:10 com64 have to install git first...
-08:10 beoran  ok
-08:11 com64 Okay, done.
-08:12 beoran  ok, so you can now lcne my repoitory
-08:12 beoran  to do that , you go "git clone https://github.com/beoran/com64.git"
-08:13 com64 done
-08:13 beoran  good :)
-08:13 beoran  now, I will push additions to the repoitory which you can "pull"
-08:14 com64 okay
-08:14 beoran  I'l lexplain tha tlater, first go inside the com64 directory, and open main.c in your favorite editor
-08:14 com64 nano :D
-08:14 beoran  that's cool, I prefer kate. Also try the ./build command, it build the main exe for you.
-08:14 beoran  ((build is a litlle shell script that does what I explained before)
-08:15 beoran  does the ./build work for you?
-08:15 com64 yup
-08:15 beoran  as for SDL: if you have any squestions about thow to use it the documentation wiki is noice: http://www.libsdl.org/cgi/docwiki.cgi/
-08:15 beoran  ok, now on with the next step
-08:16 com64 I'll bookmark it...
-08:16 com64 done
-08:16 beoran  as you can see in the program, we're using SDL_SetVideoMode to open a window to draw on
-08:17 beoran  the window is 640x480, and we don't care about the color depth so I just put 0 there
-08:17 com64 okay.
-08:18 beoran  now for SDL_HWSURFACE | SDL_ANYFORMAT
-08:18 com64 just so you know... my screen is only 1024*600... just for future reference...
-08:18 beoran  com64: yeah, but that's certainly too big for a game
-08:18 beoran  for a 2D game, at least
-08:18 com64 mmhm
-08:18 beoran  640x480 is fine :)
-08:18 beoran  now for SDL_HWSURFACE | SDL_ANYFORMAT
-08:18 com64 oaky
-08:19 beoran  do you know what that | does?
-08:19 com64 *sigh*... what is it... I know it...
-08:19 com64 the first one...
-08:19 com64 maps out the screen surface to draw on?
-08:19 beoran  hint it's some kind of poerator...
-08:20 beoran  operator :)
-08:20 com64 okay, I dunno.
-08:20 beoran  | is the binary or operator
-08:20 beoran  do you know a bit about binary numbers?
-08:20 com64 a bit
-08:20 com64 I Can count
-08:20 com64 0
-08:20 com64 1
-08:20 com64 10
-08:20 com64 11
-08:20 com64 etc
-08:20 com64 lol
-08:20 beoran  good
-08:21 com64 I've also done "hex editing"
-08:21 beoran  now the | operator works like this: if there's a 1 i the binary representation on either side, it stays a 1, only if there are 2 0 if becomes 0
-08:22 com64 okay
-08:22 beoran  so 2 | 1 == 10b | 01b == 11b == 3
-08:22 beoran  so 4 | 1 == 100b | 001b == 101b == 5
-08:23 beoran  100b is not valid in c, just a way to show you that I'm using binary notation
-08:23 com64 Okay.
-08:23 beoran  another similar operator is &, the binary and
-08:23 beoran  now the & operator works like this: if there's a 1 in the binary representation on /both/ sides, it stays a 1, otherwise it becomes 0
-08:24 beoran  so 2 | 1 == 10b | 01b == 00b == 0
-08:24 com64 oh, so it checks if they're the same.
-08:24 beoran  so 2 & 1 == 10b & 01b == 00b == 0
-08:24 beoran  I mean sorry, typo
-08:24 beoran  yea, it does, bit per bit
-08:25 com64 I get it
-08:25 beoran  so 3 & 1 == 11b & 01b == 01b == 1
-08:25 beoran  ok
-08:26 beoran  and then there's the binary XOR operatior ^ . It checks if the bits are different nad makes a 1 if they are.
-08:26 beoran  so 3 ^ 1 == 11b & 01b == 10b == 2
-08:26 beoran  so 3 ^ 1 == 11b ^ 01b == 10b == 2
-08:26 beoran  I mean
-08:28 beoran  to check this yourself later you could add a printf("%d \n", 3 | 1); somewhere in your program, so print the results
-08:28 com64 sure
-08:29 beoran  ok, so what is tha t| then? We're just making the binary or of 2 predefined integer constants
-08:29 com64 \n prints the rest on another line, right?
-08:29 beoran  yes, the \n in as tring is a newlne character
-08:29 com64 and \t is tab.
-08:29 beoran  yes
-08:29 com64 and \\ is slash lol
-08:29 beoran  and \" is to quote spaces
-08:29 beoran  yeah
-08:30 beoran  basically, SDL has a lot of integer constants predefined, most of them are used to tell SDL what to do
-08:31 beoran  in C there's several ways to define integer constants
-08:31 beoran  most people tend to use the preprocessor and do #define MAX_SPRITES 64
-08:32 beoran  when you compile c, it works in several stages.
-08:32 beoran  first the "preprocessor" runs, then the c compiler itself
-08:32 com64 I see.
-08:32 beoran  commands to the preprocessor start with #
-08:33 beoran  so, #include <SDL.h> is simply a commadn tha ttells the preprocessor to include that file for us, so we can get the functions that are declared in it and the constants that are defined in it
-08:34 beoran  #include is like an automatic copy/paste, really
-08:34 com64 Okay.
-08:34 beoran  a #define FOO bar tells the preprocessor to replace FOO with bar every time it sees FOO
-08:35 beoran  as a whole. so, this kind of #define is a bit like an automatic search/replace
-08:35 com64 what about... #using namespace randomnamespace?
-08:35 com64 is that used in C?
-08:36 beoran  no, no namespaces in C
-08:36 beoran  that's added by C++
-08:37 beoran  I want to keep it simple, so plain C is nbest to start, i feel. C++ adds hundreds of features to plain C
-08:37 beoran  most of which I feel you don't need for a simple game
-08:38 beoran  once you know c well, learning C++ should be easier too ,and should let you see which features of C++ you need and which ones you odn't
-08:38 com64 okay.
-08:38 beoran  at this point it might be instructive to take a look at the file /usr/include/SDL/SDL_video.h
-08:39 beoran  you'll see a bit down from the top that there are #define SDL_HWSURFACE 0x00000001 and more #defines in there
-08:39 com64 I"m in.
-08:39 beoran  so that's where the SDL_HWSURFACE comes from
-08:40 beoran  when you #include<SDL.h>, the SDL_video.h gets included indirectly, and the #define you see there take effect
-08:41 beoran  you may ask, what's the point of making names for integer constants like that, but 1) it clarifies what the integer means, and 2 you can change the value of the integer later if needed
-08:41 beoran  that clear? :)
-08:33 beoran  so, #include <SDL.h> is simply a commadn tha ttells the preprocessor to include that file for us, so we can get the functions that are declared in it and the constants that are defined in it
-08:34 beoran  #include is like an automatic copy/paste, really
-08:34 com64 Okay.
-08:34 beoran  a #define FOO bar tells the preprocessor to replace FOO with bar every time it sees FOO
-08:35 beoran  as a whole. so, this kind of #define is a bit like an automatic search/replace
-08:35 com64 what about... #using namespace randomnamespace?
-08:35 com64 is that used in C?
-08:36 beoran  no, no namespaces in C
-08:36 beoran  that's added by C++
-08:37 beoran  I want to keep it simple, so plain C is nbest to start, i feel. C++ adds hundreds of features to plain C
-08:37 beoran  most of which I feel you don't need for a simple game
-08:38 beoran  once you know c well, learning C++ should be easier too ,and should let you see which features of C++ you need and which ones you odn't
-08:38 com64 okay.
-08:38 beoran  at this point it might be instructive to take a look at the file /usr/include/SDL/SDL_video.h
-08:39 beoran  you'll see a bit down from the top that there are #define SDL_HWSURFACE 0x00000001 and more #defines in there
-08:39 com64 I"m in.
-08:39 beoran  so that's where the SDL_HWSURFACE comes from
-08:40 beoran  when you #include<SDL.h>, the SDL_video.h gets included indirectly, and the #define you see there take effect
-08:41 beoran  you may ask, what's the point of making names for integer constants like that, but 1) it clarifies what the integer means, and 2 you can change the value of the integer later if needed
-08:41 beoran  that clear? :)
-08:41 com64 Yeah, makes sense to me.
-08:42 com64 Quite logical.
-08:42 beoran  good
-08:42 beoran  now back to our own program
-08:43 beoran  we've opened the screen ,and if you run the main by doing ./main ,you'll see a window briefly pop up and dissapear again
-08:43 beoran  that's of course because we open the window but don't do anything yet
-08:44 com64 I don't see any window, lol
-08:44 beoran  we should keep the window open until twe want to close it
-08:44 beoran  it should blink very fast
-08:44 com64 okay
-08:44 beoran  if you can't see it
-08:44 com64 yeah, I see nothing blinking, I'm in Ubuntu.
-08:45 com64 I'm already int he command window
-08:45 com64 hm...
-08:46 com64 yeah, it outputs in the command window.
-08:46 com64 that I already have open.
-08:46 beoran  could you do "git pull" ? I made some changes
-08:46 com64 ok
-08:46 beoran  with git pull you will pull those from my github repository
-08:47 beoran  I added a SDL_Delay after opening the window so you can see it being opened (or not)
-08:49 com64 fatal: Not a git repository (or any parent up to mount parent /home)
-08:49 com64 Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
-08:49 com64 I get an error --^
-08:50 com64 wait, let me try to get into my home directory
-08:51 com64 got it
-08:51 beoran  ok good
-08:52 beoran  if you build itand run it now, you should see a window pop up for a second
-08:52 com64 ./build
-08:52 com64 whoops
-08:52 com64 wrong window lol
-08:53 com64 Okay, see it now
-08:53 beoran  good
-08:53 com64 I didn't see it before because I had my command window set to "always on top"
-08:53 com64 and it was coverint it
-08:53 beoran  d'oh :)
-08:53 com64 and it was covering it
-08:53 com64 lol
-08:53 beoran  :)
-08:53 beoran  good ,now to keep tha twindow open until we can close it
-08:54 com64 What I always did in C++ is press and hold q to quit...
-08:54 beoran  I already made some more changes, so git
-08:54 beoran  git pul lplease
-08:54 com64 k
-08:55 beoran  well, since it's a window and not full screen, I just did it using the close button on the window
-08:56 com64 I did stuff in fullscreen
-08:56 com64 usually
-08:56 beoran  well, that's nice but windowed is better to begin with. so what's new in this version? on the top i put some #ifndef TRUE #define TRUE 1 # endoif
-08:56 beoran  (ifg you hand in fllscreen mode it's difficult to get out)
-08:56 beoran  if your program hangs, I mean
-08:57 beoran  so what's #ifndef ?
-08:57 com64 guess so, but in Linux, you can use a TTY to kill the program.
-08:57 beoran  com64: sure, but it's a hassle. You can kil a window with xkill
-08:57 com64 checks something?
-08:57 beoran  yes, the #ifndef is short for if not defined
-08:57 com64 tests if something is defined.
-08:58 beoran  in plain C , booleans TRUE and FALSE may bot be defined yet. So I'm defining them if they weren't defined yet (by , say SDL)
-08:58 com64 I usually did "ps aux|grep process&&sudo kill-9 processnumber"
-08:58 com64 oh ok
-08:59 beoran  and the #endif is of course the end if the #ifndef directive
-08:59 beoran  the end of
-08:59 beoran  that clear?
-09:00 com64 I see you added SDL_Surface * player_sprite = NULL?
-09:00 com64 or I must have not seen it when you updated earlier.
-09:00 beoran  yes, that's in anticipation, though.
-09:00 com64 I also see a while loop
-09:00 beoran  more germane now, is tha tyou'll see I added a variable above the main function, namely int done;
-09:01 com64 okay.
-09:01 beoran  that variable we'll use to track if we're done with the game or not.
-09:02 beoran  note that this is a global variable, tha tmeans that all functions that are defined below it will be able to use it.
-09:02 beoran  however, we still only have one function , main, so it's only used there for now.
-09:03 beoran  and then UI added a while loop, as you remarked
-09:03 beoran  what you think the while loop will do?
-09:04 com64 While under these conditions, keep running this loop,
-09:04 com64 so in this case,
-09:04 beoran  yes ?
-09:04 com64 while the program isn't done, keep running this loop...
-09:05 beoran  good :)
-09:05 beoran  so now, on to the SDL_Event thing.
-09:05 beoran  SDL uses an "event based" input model.
-09:06 beoran  that means that whenever the user of the program does something (move the mouse, click the close button, press a key, etc, etc), SDL store s the fact that this happened in a queue
-09:06 beoran  a queue is a waiting row if you like
-09:07 beoran  and all these input "events" are being stored in the queue for us to check them and act upon.
-09:07 com64 I see.
-09:07 beoran  So we're a bit like a clerk in an office and the events are the customers waiting in row
-09:08 com64 I get it.
-09:08 beoran  let's say a post office ;p ok, good
-09:08 beoran  so, that's why we need the SDL_Event event;
-09:08 com64 I hope the post office workers don't go on strike for three weeks like they did here, and then get forced back to work by the gov't with lower pay, lmao
-09:09 beoran  com64: that sucks :p
-09:09 com64 IK
-09:09 com64 now all our mail is behind.
-09:09   *** Giroro quit (Quit: Leaving)
-09:09 com64 So we're getting mail from two weeks ago.
-09:09 beoran  so, we'll use the event variable to store the data of the events that are coming our way
-09:10 beoran  That's what SDL_PollEvent is doiing. It looks into the event queue, and stores the event in the storage area we make available to it.
-09:11 beoran  now you will wonder why we do SDL_PollEvent(&event) and not SDL_PollEvent(event)
-09:11 beoran  right ?
-09:11 com64 yeah.
-09:12 beoran  well, you see, C is quite primitive in a way
-09:12 beoran  you can't pass variables by reference
-09:12 beoran  only by value
-09:12 com64 ah.
-09:13 beoran  do you understand what pass by reference and pass by value mean?
-09:13 beoran  if not I'l lelaborate.
-09:13 com64 kind of.
-09:13 com64 elabourate, I guess..
-09:13 beoran  well, maybe I'll elaborate a bit
-09:13 com64 :)
-09:14 com64 brb; bathroom
-09:16 beoran  OK.
-09:16 beoran  please git pull again when you come back 
-09:21 beoran  please git pull again
-09:21 com64 Done.
-09:21 beoran  I added 2 functions to help explain
-09:22 beoran  the first one is by_value. Can you see what it does?
-09:22 beoran  (you may want to build and run again)
-09:23 com64 I see a lot of "I don't know what this event is!"
-09:24 beoran  sure, but on top of that?
-09:24 beoran  perhaps scroll back your console a bit
-09:24 com64 a: 2, b:12
-09:24 com64 a: 12, b:12
-09:24 beoran  exactly
-09:24 beoran  now, you understand what by_value is doing?
-09:25 com64 yeah
-09:25 beoran  as you cvan see, after calling by_value , it's argument , a remains the same
-09:25 com64 a = a + 10 means that it's adding 10b to a
-09:25 beoran  yes, iside the function we change a.
-09:25 beoran  but since a is passed by value, , we only get a copy of the value in a
-09:26 com64 in C++, you'd usually use decimals instead of binary.
-09:26 com64 I think...
-09:26 beoran  in the main program
-09:26 beoran  ah, no, the 10 is not binary, it's decimal :)
-09:26 beoran  just like in c++, really
-09:26 com64 oh, really
-09:26 beoran  sorry, I should ahave used 7 or so :)
-09:26 com64 lol
-09:27 beoran  the value of 10 is not important, it's what happens to a :)
-09:27 com64 Ok
-09:27 beoran  as you vca nsee, a is changed inside by_value
-09:27 beoran  but once the function by_value is done, it's as if this change never happened (in main)
-09:28 beoran  that's why the first output is a: 2, b:12;
-09:28 com64 Oh, I see.
-09:28 beoran  the function by_value only gets *the value of* a passed to it
-09:28 com64 I get it.
-09:28 beoran  ok
-09:29 beoran  In C, that's the *only* way to pass variables.
-09:29 beoran  But what about by_address then?
-09:29 beoran  well, in C, if you /want/ a function to change a variable yiu pass to it, you have to do it by passing the address of the variable
-09:29 com64 I don't remember what the * does.
-09:30 beoran  ok, let me explain addresses (or pointers) a bit then :)
-09:30 beoran  as you know, when you do int a = 2; in your main function you're defining a variable.
-09:30 beoran  what happens when the program is run?
-09:31 beoran  the compiler makes it so tha tsome space in the memory of your computer is reserved for the variable a
-09:31 beoran  whenever you use a in main, that space is used
-09:31 beoran  to go back to the postal office metaphor, imagine computer memory to be a large wall full of postal boxes
-09:32 beoran  the CPU is like the mailman that puts letters(data) inside the postal boxes
-09:32 com64 That's how I see it anyway, except I imagine it like keys hung on a wall.
-09:33 beoran  ah, like in a hotell? that's also a nice metaphor.
-09:33 com64 yeah.
-09:33 beoran  so what's an address? well it's just a number by which the CPU knows /which/ place in memory iyt is exactly
-09:34 beoran  if you want to see what that number is
-09:35 beoran  printf("a: %d, b:%d, address of a: %p\n", a, b, &a);
-09:35 beoran  put the above somewhere in the main of program :)
-09:36 beoran  you see, in C the & operator, when used ob n a single variable, is the "address of" operator
-09:36 beoran  the %p is to tell printf that you want to display an address
-09:37 beoran  and &a means"the address of a"
-09:37 beoran  you with me so far? 
+ beoran  Perhaps I should teach you about github and git a bit first
+ com64 I'll try to make cheesey Gates of Zendocon style explosions...
+ com64 sure
+ beoran  github is a popular web site to host your source code of your programs
+ com64 ah.
+ beoran  I've hosted the tutorial there https://github.com/beoran/com64
+ beoran  now, if you want to work with someone's source code, you have to get it somehow
+ beoran  github, as the name says, is based on the program git
+ com64 git command, amirite?
+ beoran  yes :)
+ beoran  so what's git do?
+ com64 it gits srouce code.
+ com64 :D
+ com64 lol
+ beoran  well, it's a source control or revision control program
+ beoran  com64: yes, that too actually
+ beoran  more crucially, though it helps you 1) keep previous versions of your source code 2) it helps you communicate with other developers
+ com64 I remember using either GIT or SVN for something in Linux Mint...
+ com64 I can't remember what I needed, though.
+ beoran  git works with the concept of repositories
+ beoran  basically a repository is a single project
+ beoran  so, github hosts several of my projects/repositories
+ beoran  now for you to get a copy of my repository on github, you'll have to clone it
+ beoran  to do that , you go "git clone https://github.com/beoran/com64.git"
+ beoran  (you can see the url you need on top of the page in https://github.com/beoran/com64)
+ com64 have to install git first...
+ beoran  ok
+ com64 Okay, done.
+ beoran  ok, so you can now lcne my repoitory
+ beoran  to do that , you go "git clone https://github.com/beoran/com64.git"
+ com64 done
+ beoran  good :)
+ beoran  now, I will push additions to the repoitory which you can "pull"
+ com64 okay
+ beoran  I'l lexplain tha tlater, first go inside the com64 directory, and open main.c in your favorite editor
+ com64 nano :D
+ beoran  that's cool, I prefer kate. Also try the ./build command, it build the main exe for you.
+ beoran  ((build is a litlle shell script that does what I explained before)
+ beoran  does the ./build work for you?
+ com64 yup
+ beoran  as for SDL: if you have any squestions about thow to use it the documentation wiki is noice: http://www.libsdl.org/cgi/docwiki.cgi/
+ beoran  ok, now on with the next step
+ com64 I'll bookmark it...
+ com64 done
+ beoran  as you can see in the program, we're using SDL_SetVideoMode to open a window to draw on
+ beoran  the window is 640x480, and we don't care about the color depth so I just put 0 there
+ com64 okay.
+ beoran  now for SDL_HWSURFACE | SDL_ANYFORMAT
+ com64 just so you know... my screen is only 1024*600... just for future reference...
+ beoran  com64: yeah, but that's certainly too big for a game
+ beoran  for a 2D game, at least
+ com64 mmhm
+ beoran  640x480 is fine :)
+ beoran  now for SDL_HWSURFACE | SDL_ANYFORMAT
+ com64 oaky
+ beoran  do you know what that | does?
+ com64 *sigh*... what is it... I know it...
+ com64 the first one...
+ com64 maps out the screen surface to draw on?
+ beoran  hint it's some kind of poerator...
+ beoran  operator :)
+ com64 okay, I dunno.
+ beoran  | is the binary or operator
+ beoran  do you know a bit about binary numbers?
+ com64 a bit
+ com64 I Can count
+ com64 0
+ com64 1
+ com64 10
+ com64 11
+ com64 etc
+ com64 lol
+ beoran  good
+ com64 I've also done "hex editing"
+ beoran  now the | operator works like this: if there's a 1 i the binary representation on either side, it stays a 1, only if there are 2 0 if becomes 0
+ com64 okay
+ beoran  so 2 | 1 == 10b | 01b == 11b == 3
+ beoran  so 4 | 1 == 100b | 001b == 101b == 5
+ beoran  100b is not valid in c, just a way to show you that I'm using binary notation
+ com64 Okay.
+ beoran  another similar operator is &, the binary and
+ beoran  now the & operator works like this: if there's a 1 in the binary representation on /both/ sides, it stays a 1, otherwise it becomes 0
+ beoran  so 2 | 1 == 10b | 01b == 00b == 0
+ com64 oh, so it checks if they're the same.
+ beoran  so 2 & 1 == 10b & 01b == 00b == 0
+ beoran  I mean sorry, typo
+ beoran  yea, it does, bit per bit
+ com64 I get it
+ beoran  so 3 & 1 == 11b & 01b == 01b == 1
+ beoran  ok
+ beoran  and then there's the binary XOR operatior ^ . It checks if the bits are different nad makes a 1 if they are.
+ beoran  so 3 ^ 1 == 11b & 01b == 10b == 2
+ beoran  so 3 ^ 1 == 11b ^ 01b == 10b == 2
+ beoran  I mean
+ beoran  to check this yourself later you could add a printf("%d \n", 3 | 1); somewhere in your program, so print the results
+ com64 sure
+ beoran  ok, so what is tha t| then? We're just making the binary or of 2 predefined integer constants
+ com64 \n prints the rest on another line, right?
+ beoran  yes, the \n in as tring is a newlne character
+ com64 and \t is tab.
+ beoran  yes
+ com64 and \\ is slash lol
+ beoran  and \" is to quote spaces
+ beoran  yeah
+ beoran  basically, SDL has a lot of integer constants predefined, most of them are used to tell SDL what to do
+ beoran  in C there's several ways to define integer constants
+ beoran  most people tend to use the preprocessor and do #define MAX_SPRITES 64
+ beoran  when you compile c, it works in several stages.
+ beoran  first the "preprocessor" runs, then the c compiler itself
+ com64 I see.
+ beoran  commands to the preprocessor start with #
+ beoran  so, #include <SDL.h> is simply a commadn tha ttells the preprocessor to include that file for us, so we can get the functions that are declared in it and the constants that are defined in it
+ beoran  #include is like an automatic copy/paste, really
+ com64 Okay.
+ beoran  a #define FOO bar tells the preprocessor to replace FOO with bar every time it sees FOO
+ beoran  as a whole. so, this kind of #define is a bit like an automatic search/replace
+ com64 what about... #using namespace randomnamespace?
+ com64 is that used in C?
+ beoran  no, no namespaces in C
+ beoran  that's added by C++
+ beoran  I want to keep it simple, so plain C is nbest to start, i feel. C++ adds hundreds of features to plain C
+ beoran  most of which I feel you don't need for a simple game
+ beoran  once you know c well, learning C++ should be easier too ,and should let you see which features of C++ you need and which ones you odn't
+ com64 okay.
+ beoran  at this point it might be instructive to take a look at the file /usr/include/SDL/SDL_video.h
+ beoran  you'll see a bit down from the top that there are #define SDL_HWSURFACE 0x00000001 and more #defines in there
+ com64 I"m in.
+ beoran  so that's where the SDL_HWSURFACE comes from
+ beoran  when you #include<SDL.h>, the SDL_video.h gets included indirectly, and the #define you see there take effect
+ beoran  you may ask, what's the point of making names for integer constants like that, but 1) it clarifies what the integer means, and 2 you can change the value of the integer later if needed
+ beoran  that clear? :)
+ com64 Yeah, makes sense to me.
+ com64 Quite logical.
+ beoran  good
+ beoran  now back to our own program
+ beoran  we've opened the screen ,and if you run the main by doing ./main ,you'll see a window briefly pop up and dissapear again
+ beoran  that's of course because we open the window but don't do anything yet
+ com64 I don't see any window, lol
+ beoran  we should keep the window open until twe want to close it
+ beoran  it should blink very fast
+ com64 okay
+ beoran  if you can't see it
+ com64 yeah, I see nothing blinking, I'm in Ubuntu.
+ com64 I'm already int he command window
+ com64 hm...
+ com64 yeah, it outputs in the command window.
+ com64 that I already have open.
+ beoran  could you do "git pull" ? I made some changes
+ com64 ok
+ beoran  with git pull you will pull those from my github repository
+ beoran  I added a SDL_Delay after opening the window so you can see it being opened (or not)
+ com64 fatal: Not a git repository (or any parent up to mount parent /home)
+ com64 Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+ com64 I get an error --^
+ com64 wait, let me try to get into my home directory
+ com64 got it
+ beoran  ok good
+ beoran  if you build itand run it now, you should see a window pop up for a second
+ com64 ./build
+ com64 whoops
+ com64 wrong window lol
+ com64 Okay, see it now
+ beoran  good
+ com64 I didn't see it before because I had my command window set to "always on top"
+ com64 and it was coverint it
+ beoran  d'oh :)
+ com64 and it was covering it
+ com64 lol
+ beoran  :)
+ beoran  good ,now to keep tha twindow open until we can close it
+ com64 What I always did in C++ is press and hold q to quit...
+ beoran  I already made some more changes, so git
+ beoran  git pul lplease
+ com64 k
+ beoran  well, since it's a window and not full screen, I just did it using the close button on the window
+ com64 I did stuff in fullscreen
+ com64 usually
+ beoran  well, that's nice but windowed is better to begin with. so what's new in this version? on the top i put some #ifndef TRUE #define TRUE 1 # endoif
+ beoran  (ifg you hand in fllscreen mode it's difficult to get out)
+ beoran  if your program hangs, I mean
+ beoran  so what's #ifndef ?
+ com64 guess so, but in Linux, you can use a TTY to kill the program.
+ beoran  com64: sure, but it's a hassle. You can kil a window with xkill
+ com64 checks something?
+ beoran  yes, the #ifndef is short for if not defined
+ com64 tests if something is defined.
+ beoran  in plain C , booleans TRUE and FALSE may bot be defined yet. So I'm defining them if they weren't defined yet (by , say SDL)
+ com64 I usually did "ps aux|grep process&&sudo kill-9 processnumber"
+ com64 oh ok
+ beoran  and the #endif is of course the end if the #ifndef directive
+ beoran  the end of
+ beoran  that clear?
+ com64 I see you added SDL_Surface * player_sprite = NULL?
+ com64 or I must have not seen it when you updated earlier.
+ beoran  yes, that's in anticipation, though.
+ com64 I also see a while loop
+ beoran  more germane now, is tha tyou'll see I added a variable above the main function, namely int done;
+ com64 okay.
+ beoran  that variable we'll use to track if we're done with the game or not.
+ beoran  note that this is a global variable, tha tmeans that all functions that are defined below it will be able to use it.
+ beoran  however, we still only have one function , main, so it's only used there for now.
+ beoran  and then UI added a while loop, as you remarked
+ beoran  what you think the while loop will do?
+ com64 While under these conditions, keep running this loop,
+ com64 so in this case,
+ beoran  yes ?
+ com64 while the program isn't done, keep running this loop...
+ beoran  good :)
+ beoran  so now, on to the SDL_Event thing.
+ beoran  SDL uses an "event based" input model.
+ beoran  that means that whenever the user of the program does something (move the mouse, click the close button, press a key, etc, etc), SDL store s the fact that this happened in a queue
+ beoran  a queue is a waiting row if you like
+ beoran  and all these input "events" are being stored in the queue for us to check them and act upon.
+ com64 I see.
+ beoran  So we're a bit like a clerk in an office and the events are the customers waiting in row
+ com64 I get it.
+ beoran  let's say a post office ;p ok, good
+ beoran  so, that's why we need the SDL_Event event;
+ com64 I hope the post office workers don't go on strike for three weeks like they did here, and then get forced back to work by the gov't with lower pay, lmao
+ beoran  com64: that sucks :p
+ com64 IK
+ com64 now all our mail is behind.
+   *** Giroro quit (Quit: Leaving)
+ com64 So we're getting mail from two weeks ago.
+ beoran  so, we'll use the event variable to store the data of the events that are coming our way
+ beoran  That's what SDL_PollEvent is doiing. It looks into the event queue, and stores the event in the storage area we make available to it.
+ beoran  now you will wonder why we do SDL_PollEvent(&event) and not SDL_PollEvent(event)
+ beoran  right ?
+ com64 yeah.
+ beoran  well, you see, C is quite primitive in a way
+ beoran  you can't pass variables by reference
+ beoran  only by value
+ com64 ah.
+ beoran  do you understand what pass by reference and pass by value mean?
+ beoran  if not I'l lelaborate.
+ com64 kind of.
+ com64 elabourate, I guess..
+ beoran  well, maybe I'll elaborate a bit
+ com64 :)
+ com64 brb; bathroom
+ beoran  OK.
+ beoran  please git pull again when you come back 
+ beoran  please git pull again
+ com64 Done.
+ beoran  I added 2 functions to help explain
+ beoran  the first one is by_value. Can you see what it does?
+ beoran  (you may want to build and run again)
+ com64 I see a lot of "I don't know what this event is!"
+ beoran  sure, but on top of that?
+ beoran  perhaps scroll back your console a bit
+ com64 a: 2, b:12
+ com64 a: 12, b:12
+ beoran  exactly
+ beoran  now, you understand what by_value is doing?
+ com64 yeah
+ beoran  as you cvan see, after calling by_value , it's argument , a remains the same
+ com64 a = a + 10 means that it's adding 10b to a
+ beoran  yes, iside the function we change a.
+ beoran  but since a is passed by value, , we only get a copy of the value in a
+ com64 in C++, you'd usually use decimals instead of binary.
+ com64 I think...
+ beoran  in the main program
+ beoran  ah, no, the 10 is not binary, it's decimal :)
+ beoran  just like in c++, really
+ com64 oh, really
+ beoran  sorry, I should ahave used 7 or so :)
+ com64 lol
+ beoran  the value of 10 is not important, it's what happens to a :)
+ com64 Ok
+ beoran  as you vca nsee, a is changed inside by_value
+ beoran  but once the function by_value is done, it's as if this change never happened (in main)
+ beoran  that's why the first output is a: 2, b:12;
+ com64 Oh, I see.
+ beoran  the function by_value only gets *the value of* a passed to it
+ com64 I get it.
+ beoran  ok
+ beoran  In C, that's the *only* way to pass variables.
+ beoran  But what about by_address then?
+ beoran  well, in C, if you /want/ a function to change a variable yiu pass to it, you have to do it by passing the address of the variable
+ com64 I don't remember what the * does.
+ beoran  ok, let me explain addresses (or pointers) a bit then :)
+ beoran  as you know, when you do int a = 2; in your main function you're defining a variable.
+ beoran  what happens when the program is run?
+ beoran  the compiler makes it so tha tsome space in the memory of your computer is reserved for the variable a
+ beoran  whenever you use a in main, that space is used
+ beoran  to go back to the postal office metaphor, imagine computer memory to be a large wall full of postal boxes
+ beoran  the CPU is like the mailman that puts letters(data) inside the postal boxes
+ com64 That's how I see it anyway, except I imagine it like keys hung on a wall.
+ beoran  ah, like in a hotell? that's also a nice metaphor.
+ com64 yeah.
+ beoran  so what's an address? well it's just a number by which the CPU knows /which/ place in memory iyt is exactly
+ beoran  if you want to see what that number is
+ beoran  printf("a: %d, b:%d, address of a: %p\n", a, b, &a);
+ beoran  put the above somewhere in the main of program :)
+ beoran  you see, in C the & operator, when used ob n a single variable, is the "address of" operator
+ beoran  the %p is to tell printf that you want to display an address
+ beoran  and &a means"the address of a"
+ beoran  you with me so far? 
 
-09:29 beoran  In C, that's the *only* way to pass variables.
-09:29 beoran  But what about by_address then?
-09:29 beoran  well, in C, if you /want/ a function to change a variable yiu pass to it, you have to do it by passing the address of the variable
-09:29 com64 I don't remember what the * does.
-09:30 beoran  ok, let me explain addresses (or pointers) a bit then :)
-09:30 beoran  as you know, when you do int a = 2; in your main function you're defining a variable.
-09:30 beoran  what happens when the program is run?
-09:31 beoran  the compiler makes it so tha tsome space in the memory of your computer is reserved for the variable a
-09:31 beoran  whenever you use a in main, that space is used
-09:31 beoran  to go back to the postal office metaphor, imagine computer memory to be a large wall full of postal boxes
-09:32 beoran  the CPU is like the mailman that puts letters(data) inside the postal boxes
-09:32 com64 That's how I see it anyway, except I imagine it like keys hung on a wall.
-09:33 beoran  ah, like in a hotell? that's also a nice metaphor.
-09:33 com64 yeah.
-09:33 beoran  so what's an address? well it's just a number by which the CPU knows /which/ place in memory iyt is exactly
-09:34 beoran  if you want to see what that number is
-09:35 beoran  printf("a: %d, b:%d, address of a: %p\n", a, b, &a);
-09:35 beoran  put the above somewhere in the main of program :)
-09:36 beoran  you see, in C the & operator, when used ob n a single variable, is the "address of" operator
-09:36 beoran  the %p is to tell printf that you want to display an address
-09:37 beoran  and &a means"the address of a"
-09:37 beoran  you with me so far?
-09:39 com64 yeah
-09:39 beoran  ok
-09:39 beoran  now then, what's a pointer then?
-09:40 beoran  well, as you can see, you can take the address of a variable. A pointer is actually also a variable, but a slightly special one: it's a variable that can be used to store an address in.
-09:41 com64 hm...
-09:41 beoran  to go back to my mail boxes analogy
-09:41 beoran  let's say the mail man say: ok, the box number 1 , I'll call the stevenson box;
-09:42 beoran  in c you'd say , for example: int stevenson;
-09:42 beoran  and &stevenson would then be 1
-09:43 beoran  and the mailman can then store a note with , say, the number 127 in the "stevenson" box
-09:43 beoran  in c you'd go; stevenson = 127;
-09:44 beoran  but let's say the mailman is forgetful and wants to keep tack of where the stevenson box is
-09:44 beoran  so , he sais, ok, I'l take box number 99 and that I'll call the pointer_to_stevenson box.
-09:45 beoran  and in that box, he puts a note with the address of the stevenson box.
-09:46 beoran  so, whenever he's forgotten where the stevenson box was, he ca nstill ook in the pointer_to_stevenson box, and then see what the number (address) of the stevenson box is, and find it back like that.
-09:47 beoran  in c, you'd go : int * pointer_to_stevenson; the * indicates "pointer to"
-09:47 beoran  and then to store the address of stevenson in pointer_to_stevenson, you do: pointer_to_stevenson = &stevenson;
-09:48 beoran  wait, let me update the tutorial to show this :)
-09:48 com64 okay.
-09:51 beoran  ok, please pull again. I changed the name to jones, though, shorter
-09:52 beoran  com64: please pull again :)
-09:52 com64 This happens:
-09:52 com64 error: Your local changes to the following files would be overwritten by merge:
-09:52 com64 main.c
-09:52 com64 Please, commit your changes or stash them before you can merge.
-09:52 com64 Aborting
-09:53 beoran  yes, that's because you made loca lchanges
-09:53 beoran  just do git stash and then git pull
-09:53 com64 brb; bathroom again
-09:54 beoran  ok I'll go too
-09:56 beoran  back
-10:02 com64 have to print out a schedule... one minute
-10:03 beoran  ok :)
-10:11 com64 back
-10:14 beoran  ok
-10:15 beoran  could you pull the jones changes now?
-10:15 com64 Already did
-10:15 beoran  do you see what's happening so far? jones is a variable that we store 127 in, and in poinetr_to_jones, we store the address of jones.
-10:16 com64 ok
-10:16 beoran  In C , pointer syntax is a bit weird. To define a pointer to a type Type you have to say Type * variable;
-10:17 beoran  lamost like you have to read backward: variable is a pointer to Type.
-10:17 beoran  good, now sppose we have our forgetful mailman who want to put a letter in the jones box.
-10:18 beoran  but he doesn't know what the number(address) of the jones box is
-10:18 beoran  but he knows ha can look inside the pointer_to_jones box to look up the addres of the jones box.
-10:19 beoran  so he looks inside tha pointer_to_jones box, see there's a paper in there which says 1, and then lknows he has to put the letter in the box with address nr 1
-10:20 beoran  in C, you'd do (*pointer_to_jones) = 128; this has the same effect as jones = 128;
-10:21 beoran  the (*pointer) syntax means "look at the address that this pointer points to" and since it's followed by an assignment, the value 128 will be stored there.
-10:23 beoran  or, if you xwant to see wthe value of the variable the pointer points to, just (*pointer) will get that value
-10:23 beoran  is that somewhat clear? if not please ask
-10:23 com64 clear enouggh ;)
-10:24 beoran  so now, do you understand how by_address works?
-10:24 beoran  You can see, that funtion *does* change a where by_value doesn't.
-10:24 com64 yes I get it...
-10:25 beoran  a question then: why do I do (*a) = (*a) + 10 ?
-10:26 com64 hm...
-10:27 beoran  what does the (*a) on the right of the = do ?
-10:27 com64 ah.
-10:27 com64 it...
-10:27 com64 it gets ten added to it.
-10:27 com64 if it was (*a) = 10, then it would just set *a as 10
-10:27 beoran  yes it would
-10:28 beoran  and then what whould the value of a in main() become after you call by_address(&a); ?
-10:28 beoran  if it was as you say?
-10:30 com64 Let's see...
-10:30 beoran  (you can try it yourself by changing by_address) :)
-10:30 beoran  don't hesitate to experiment on details to deepen your understanding.
-10:30 com64 hm... it would be whatever it was before the function?
-10:30 beoran  no
-10:30 com64 hm...
-10:30 com64 let me try..
-10:31 beoran  yes :)
-10:33 com64 In main, it's whatever it's set in by_address
-10:33 beoran  exactly
-10:33 beoran  so what does (*a) = whatever do?
-10:33 beoran  in by address?
-10:34 com64 changes the value of (*a)
-10:34 beoran  hmmm... almost I 'd say
-10:34 com64 (*a) is equal to ...
-10:34 beoran  yes... :)
-10:35 beoran  a hint: what is a in by_address (look at the function arguments)
-10:36 beoran  is a an int (integer) ?
-10:36 com64 a is an integer.
-10:36 com64 int * a
-10:36 beoran  look closely, there's a * there
-10:36 beoran  what does tha t* mean in that context?
-10:36 com64 pointer to?
-10:36 beoran  yes!
-10:37 beoran  so a in by_address is what exactly?
-10:37 com64 pointer to an integer?
-10:37 com64 lol
-10:37 beoran  yes
-10:37 beoran  so if you do *a , what are you doing?
-10:38 beoran  to clarifuy i always put () around *pointer because of precedence rules and problems
-10:38 beoran  (*a) means the same as *a, normally
-10:38 com64 brb, have to move to another room...
-10:38 beoran  ok
-10:39 beoran  you on a laptop or something? :)
-
+ beoran  In C, that's the *only* way to pass variables.
+ beoran  But what about by_address then?
+ beoran  well, in C, if you /want/ a function to change a variable yiu pass to it, you have to do it by passing the address of the variable
+ com64 I don't remember what the * does.
+ beoran  ok, let me explain addresses (or pointers) a bit then :)
+ beoran  as you know, when you do int a = 2; in your main function you're defining a variable.
+ beoran  what happens when the program is run?
+ beoran  the compiler makes it so tha tsome space in the memory of your computer is reserved for the variable a
+ beoran  whenever you use a in main, that space is used
+ beoran  to go back to the postal office metaphor, imagine computer memory to be a large wall full of postal boxes
+ beoran  the CPU is like the mailman that puts letters(data) inside the postal boxes
+ com64 That's how I see it anyway, except I imagine it like keys hung on a wall.
+ beoran  ah, like in a hotell? that's also a nice metaphor.
+ com64 yeah.
+ beoran  so what's an address? well it's just a number by which the CPU knows /which/ place in memory iyt is exactly
+ beoran  if you want to see what that number is
+ beoran  printf("a: %d, b:%d, address of a: %p\n", a, b, &a);
+ beoran  put the above somewhere in the main of program :)
+ beoran  you see, in C the & operator, when used ob n a single variable, is the "address of" operator
+ beoran  the %p is to tell printf that you want to display an address
+ beoran  and &a means"the address of a"
+ beoran  you with me so far?
+ com64 yeah
+ beoran  ok
+ beoran  now then, what's a pointer then?
+ beoran  well, as you can see, you can take the address of a variable. A pointer is actually also a variable, but a slightly special one: it's a variable that can be used to store an address in.
+ com64 hm...
+ beoran  to go back to my mail boxes analogy
+ beoran  let's say the mail man say: ok, the box number 1 , I'll call the stevenson box;
+ beoran  in c you'd say , for example: int stevenson;
+ beoran  and &stevenson would then be 1
+ beoran  and the mailman can then store a note with , say, the number 127 in the "stevenson" box
+ beoran  in c you'd go; stevenson = 127;
+ beoran  but let's say the mailman is forgetful and wants to keep tack of where the stevenson box is
+ beoran  so , he sais, ok, I'l take box number 99 and that I'll call the pointer_to_stevenson box.
+ beoran  and in that box, he puts a note with the address of the stevenson box.
+ beoran  so, whenever he's forgotten where the stevenson box was, he ca nstill ook in the pointer_to_stevenson box, and then see what the number (address) of the stevenson box is, and find it back like that.
+ beoran  in c, you'd go : int * pointer_to_stevenson; the * indicates "pointer to"
+ beoran  and then to store the address of stevenson in pointer_to_stevenson, you do: pointer_to_stevenson = &stevenson;
+ beoran  wait, let me update the tutorial to show this :)
+ com64 okay.
+ beoran  ok, please pull again. I changed the name to jones, though, shorter
+ beoran  com64: please pull again :)
+ com64 This happens:
+ com64 error: Your local changes to the following files would be overwritten by merge:
+ com64 main.c
+ com64 Please, commit your changes or stash them before you can merge.
+ com64 Aborting
+ beoran  yes, that's because you made loca lchanges
+ beoran  just do git stash and then git pull
+ com64 brb; bathroom again
+ beoran  ok I'll go too
+ beoran  back
+ com64 have to print out a schedule... one minute
+ beoran  ok :)
+ com64 back
+ beoran  ok
+ beoran  could you pull the jones changes now?
+ com64 Already did
+ beoran  do you see what's happening so far? jones is a variable that we store 127 in, and in poinetr_to_jones, we store the address of jones.
+ com64 ok
+ beoran  In C , pointer syntax is a bit weird. To define a pointer to a type Type you have to say Type * variable;
+ beoran  lamost like you have to read backward: variable is a pointer to Type.
+ beoran  good, now sppose we have our forgetful mailman who want to put a letter in the jones box.
+ beoran  but he doesn't know what the number(address) of the jones box is
+ beoran  but he knows ha can look inside the pointer_to_jones box to look up the addres of the jones box.
+ beoran  so he looks inside tha pointer_to_jones box, see there's a paper in there which says 1, and then lknows he has to put the letter in the box with address nr 1
+ beoran  in C, you'd do (*pointer_to_jones) = 128; this has the same effect as jones = 128;
+ beoran  the (*pointer) syntax means "look at the address that this pointer points to" and since it's followed by an assignment, the value 128 will be stored there.
+ beoran  or, if you xwant to see wthe value of the variable the pointer points to, just (*pointer) will get that value
+ beoran  is that somewhat clear? if not please ask
+ com64 clear enouggh ;)
+ beoran  so now, do you understand how by_address works?
+ beoran  You can see, that funtion *does* change a where by_value doesn't.
+ com64 yes I get it...
+ beoran  a question then: why do I do (*a) = (*a) + 10 ?
+ com64 hm...
+ beoran  what does the (*a) on the right of the = do ?
+ com64 ah.
+ com64 it...
+ com64 it gets ten added to it.
+ com64 if it was (*a) = 10, then it would just set *a as 10
+ beoran  yes it would
+ beoran  and then what whould the value of a in main() become after you call by_address(&a); ?
+ beoran  if it was as you say?
+ com64 Let's see...
+ beoran  (you can try it yourself by changing by_address) :)
+ beoran  don't hesitate to experiment on details to deepen your understanding.
+ com64 hm... it would be whatever it was before the function?
+ beoran  no
+ com64 hm...
+ com64 let me try..
+ beoran  yes :)
+ com64 In main, it's whatever it's set in by_address
+ beoran  exactly
+ beoran  so what does (*a) = whatever do?
+ beoran  in by address?
+ com64 changes the value of (*a)
+ beoran  hmmm... almost I 'd say
+ com64 (*a) is equal to ...
+ beoran  yes... :)
+ beoran  a hint: what is a in by_address (look at the function arguments)
+ beoran  is a an int (integer) ?
+ com64 a is an integer.
+ com64 int * a
+ beoran  look closely, there's a * there
+ beoran  what does tha t* mean in that context?
+ com64 pointer to?
+ beoran  yes!
+ beoran  so a in by_address is what exactly?
+ com64 pointer to an integer?
+ com64 lol
+ beoran  yes
+ beoran  so if you do *a , what are you doing?
+ beoran  to clarifuy i always put () around *pointer because of precedence rules and problems
+ beoran  (*a) means the same as *a, normally
+ com64 brb, have to move to another room...
+ beoran  ok
+ beoran  you on a laptop or something? :)
+ com64 yes.
+ beoran  please tell when the move's ok
+ com64 must find my charger...
+ beoran  oic
+ com64 ready.
+ beoran  good
+ beoran  so you found out what int * a means
+ beoran  now, later, in the body of the function , *a is also used, but it's pmeaning is diffferent
+ com64 so when you are doing *a, you are using the address of a, not the value.
+ com64 wait
+ com64 hm...
+ com64 doesn't seem right
+ beoran  no it's not. in fact it's opposite
+ beoran  if you use a (at least in by_address) you're using the address/pointer
+ beoran  I confess I made this a bit confusing on purpose by using a both in main and in by_address.
+ com64 lol
+ beoran  in by_address, if I call it in main as by_address(&a) what address will a in by_address contain?
+ beoran  and what address will a in by_adddress contain i I call the function in main as by_address(&b) ?
+ beoran  (questions for you) :)
+ com64 yeah... thinking
+ beoran  good, never stop that :)
+ com64 I keep forgetting what the ampersand operator does.
+ beoran  ah, I see
+ beoran  it takes the address of a variable
+ com64 ok
+ com64 let me think...
+ beoran  look at the output: address of a: 0xbfcb7140
+ beoran  that means the variable a in main is stored at that address
+ com64 ah, it adds to the address (so it changes where it's stored)
+ com64 I think.
+ com64 *changes the address.
+ beoran  no not quite,
+ beoran  I'll push another change to help clarify
+ com64 ah, didn't look closely enough.
+ com64 okay
+ beoran  ok pushed
+ beoran  if you're unsure what happens, printf can sometimes help if used correctly.
+ beoran  please pull
+ com64 okay
+ beoran  could you run it ?
+ com64 okay
+ beoran  a: 2, b:12, address of a: 0xbfc01b34, address of b: 0xbfc01b30 In by_address: a: 0xbfc01b34, (*a): 2 In by_address: a: 0xbfc01b30, (*a): 10
+ beoran  so you see, in main, what the addresses are of a and b, right?
+ com64 yes
+ beoran  (the numbers may be different for you, as addresses are asigned by the OS and the compiler)
+ com64 ik
+ beoran  ok
+ beoran  so now, if you do by_address(&a) in main what will a be inside of by_address ?
+ com64 don't quite understand the question.
+ beoran  ok
+ beoran  all these a's are confusing, I pushed anothe rversions tha trenames the a in by_address to pointer
+ beoran  please pull :)
+ com64 done
+ beoran  now I can restate the question : what will the value of pointer become when you call by_address(&a) ?
+ beoran  (hint: the printf output tells you)
+ com64 one se
+ com64 c
+   beoran nods
+ com64 10?
+ com64 lol
+ beoran  no, but that's also something
+ beoran  10 is the value of (*pointer) :)
+ beoran  byt the question was, what is the value of (pointer)
+ beoran  byt the question was, what is the value of pointer?
+ com64 So... it was 2?
+ com64 lol
+ beoran  also not
+ com64 lmao
+ beoran  look at this output:
+ beoran  a: 2, b:12, address of a: 0xbf929594, address of b: 0xbf929590
+ beoran  where does that output come from?
+ com64 ah i was reading it wrong... one sec
+ beoran  ok
+ beoran  also read this well:
+ beoran  In by_address: pointer: 0xbf929594, (*pointer): 2
+ com64 I had it in a tiny window, so I was completely confused...
+ beoran  make your font bigger already ;)
+ com64 okay...
+ beoran  so the big question eremains, when you do by_addres(&a), what does pointer become inside by_address ?
+ com64 okay, let me think
+ com64 lol
+ beoran  the printf output is a dead giveaway :)
+ com64 lol
+ com64 XD
+ com64 12?
+ com64 kik
+ com64 lol*
+ beoran  In by_address: pointer: 0xbf929594
+ com64 hm...
+ beoran  so what is the value of pointer in by_addresss?
+ beoran  well, it's 0xbf929594 of course, which is what?
+ beoran  is it a normal integer?
+ com64 dunno... I think our numbers are different.
+ beoran  sure,
+ beoran  what do you get
+ beoran  something 0xblah blah right?
+ com64 a: 2, b:12, address of a: 0xbfa48790, address of b: 0xbfa4878c
+ com64 In by_address: pointer: 0xbfa48790, (*pointer): 2
+ com64 In by_address: pointer: 0xbfa4878c, (*pointer): 10
+ com64 a: 10, b:10
+ beoran  good
+ beoran  so In by_address: pointer: 0xbfa48790
+ beoran  what is 0xbfa48790?
+ beoran  is it a normal integer value? or is it specia lsomehow?
+   beoran goes all out socratic on com64 :)
+ com64 lol
+ beoran  is 0xbfa48790 a normal integer?
+ beoran  address of a: 0xbfa48790
+ beoran  *address* of a: 0xbfa48790
+ com64 lol
+ com64 I have no Idea why I'm not getting it.
+ beoran  *******address*********** of a: 0xbfa48790
+ beoran  :)
+ com64 it's an address?
+ com64 lmao
+ com64 XD
+ beoran  yes, finally
+ beoran  so what is stored in pointer in by_addresss?
+ com64 the address... of something?
+ beoran  yes!
+ com64 lol
+ beoran  and the addres of what is it?
+   *** Kutagh joined #eon
+ beoran  In by_address: pointer: 0xbfa48790 ; address of a: 0xbfa48790
+ com64 address of... I'm affraid to get this wrong...
+ beoran  don't fear :)
+ com64 it's the address of a?
+ com64 lol
+ beoran  yes!
+ beoran  banzai! ;)
+ com64 Why am I so clueless lol.
+ beoran  no, you're just a beginner.
+ com64 let's throw a party lmao
+ beoran  I'm giving you the clues.
+ com64 lol
+ beoran  of, but wait
+ beoran  ok, but wait
+ com64 jk
+ beoran  when you do by_addres(&b), what is stored in pointer inside by_address ?
+ beoran  (not a, b)
+ com64 address of b?
+ com64 lol
+ beoran  yes :)
+ beoran  so now you know what's inside pointer
+ beoran  so what does (*pointer) do then?
+ com64 when the answer seems too obvious, sometimes I think it may be incorrect, lol.
+ beoran  com64: that's a beginner's mind
+ com64 ik...
+ beoran  sometimes the obvious answer is rightand sometimes it's wring
+ beoran  like all in life
+ beoran  anyway
+ beoran  what does (*pointer) do then?
+ com64 thinking.
+ beoran  n by_address: pointer: 0xbfa48790, (*pointer): 2
+ beoran  this is when you do by_address(&a)
+ com64 oh, it specifies the value stored at that address?
+ beoran  yes !
+ com64 phew.
+ beoran  and what does (*a) = 10 do?
+ com64 sets the value stored in the address of a to ten?
+ beoran  sorry, I mean and what does (*pointer) = 10 do?
+ com64 ok...
+ com64 sets the balue stored in that address to ten...
+ beoran  yes, it sets the value in the address stored in pointer to 10
+ beoran  so , (*pointer) gets what at the address that pointer *points to*
+ beoran  and (*pointer) = whatever stores whatever to the address that pointer *points to*
+ com64 okay.
+ beoran  that's why pointers are called like that
+ beoran  their own value is an address of something else
+ beoran  the value of a pointer is an address of something else
+ beoran  that something else is what the pointer points to
+ com64 okay.
+ beoran  so, in by_address pointer will point o a if you do by_value(&a)
+ com64 Next time I should take some notes; I remember things more clearly that way.
+ beoran  I'm logging our chat
+ com64 me too.
+ beoran  It will be in the readme file.
+ beoran  ok, good
+ com64 ok thanks
+ com64 I don't remember where my chat logs are stored... probably in ~/.chat/logs or whatever.
+ beoran  one more question to see if you really got this: if you do by_addres(&b), what does pointer point to?
+ com64 points to address of b?
+ beoran  correct
+ beoran  well, more exactly, it point to b directly
+ com64 oh, ok
+ beoran  pointers contain addresses, and point to other variables
+ com64 ok
+ com64 I have to go to bed soon...
+ beoran  com64: ok,
+ com64 but I'll probably be on around in 8 to 10 hours.
+ beoran  well, then I have one homework question for you
+ com64 okay
+ beoran  why do we do SDL_PollEvent(&event) in stead of SDL_PollEvent(event)?
+ com64 because we can't call event directly.
+ com64 we have to call the address.
+ com64 because c is like that...
+ beoran  well, the right reminology is we have to call SDL_PollEvent and *pass* event as an address
+ com64 yeah, I get terms mixed up sometimes.
+ beoran  And why do we need to pass the address of event to SDL_PollEvent ?
+ com64 because...
+ beoran  what happens to a when we do by_address(&a) ?
+ com64 wait one sec...
+ com64 address of event is stored in SDL_PollEvent?
+ com64 I mean...
+ com64 event is stored in SDL_PollEvent.
+ beoran  well, yes, an event is stored by SDL_PollEvent... where ?
+   com64 sighs and thinks.
+ beoran  look back at by_address(&a)
+ beoran  before we do by_address(&a) , a is 2 , after it's ?
+ com64 2?
+ beoran  no, wtaht's when you cann by_value(a)
+ com64 wait... 10.
+ beoran  yes!
+ beoran  so what happens to a when you call by_address(&a) ?
+ beoran  does it stay the same?
+ com64 changes...
+ beoran  it changes
+ beoran  su why do I pass a by address there?
+ com64 so it will change the actual value?
+ beoran  yes
+ beoran  !!!
+ com64 :)
+ beoran  why do we do SDL_PollEvent(&event) in stead of SDL_PollEvent(event)?
+ com64 so we can change the actual value not just use the value...
+ beoran  yes!!!
+ com64 or something along those lines.
+ com64 lol
+ beoran  no that's eactly the answer.
+ com64 okay.
+ beoran  in plain c,
+ Kutagh  sounds like ref <var> in C# :)
+ beoran  you must pass an address,
+ beoran  yes, thats' pass by reference
+ beoran  but C doesn't have a pass by reference
+ Kutagh  I know :p
+ beoran  so you have to do it in a more complicated way
+ com64 Joy.
+ com64 (sarchasm)
+ com64 lol
+ Kutagh  heh
+ beoran  in plain c, you pass the address to the function that must modify your variable
+ beoran  like that you fake by reference calling :)
+ beoran  good, now you understand 50% of pointers in C. :)
+ com64 lol
+ beoran  SDL uses pass by address style often, so I have to teach you this way anyway
+ beoran  if you liokk at the docs of SDL_PollEvent, you'll see it also returns a value
+ beoran  you probaby understand the concept of a function returning a value, right?
+ com64 yeah...
+ com64 I guess
+ com64 all functions return a value... etc.
+ beoran  and that value can be used by the caller
+ beoran  SDL_PollEvent returns true if there are more events waiting in the queue, false if not
+ com64 I see.
+ beoran  we really should empty the squeue as often as possible , so that's why there is a while(SDL_PollEvent(&event)) around it
+ beoran  and then in the while is a case statement that handles the event
+ beoran  you know the case statement, right?
+ com64 dunno
+ beoran  I mean switch/case? Ok I'll explain
+ beoran  you know if(variable) { ... } else {...} ?
+ Kutagh  oh joy.... :p
+ com64 yes
+ beoran  like if(event.type == SDL_QUIT) {..} ok
+ com64 okay
+ beoran  now, SDL has many, many event types ,each of which should be handled differently.
+ Kutagh  switch is just a bunch of if-else statements but prettier :p
+ beoran  you could use alot of if(event.type == SDL_BLABLA) , but that would get annoying
+ Kutagh  (and more optimized)
+ beoran  Kutagh: yeah that's right
+ beoran  so you do switch(event.type)
+ beoran  and then for every event type you want to handle you add a
+ beoran  case SDL_BLABLA: /*handle event here*/ ; break;
+ beoran  break ; is for the compiler to know tha tyou're done with that case.
+ Kutagh  does C require you to break or allows case fall-through?
+ beoran  C is fall-though by default
+ Kutagh  heh k
+ beoran  com64: don't wory about "fall through" yet, you probably don't need it yet
+ Kutagh  yeah don't worry about it for now.
+ com64 k
+ beoran  just remember to always put a break; at the end ofe very case, otherwise fallthough will happen and you don' t want that (yet).
+ Kutagh  Though you might quickly explain it when ur finished with switch, beoran, cuz it can lead to otherwise weird errors :p
+ Kutagh  or that, nvm :p
+ beoran  I'll explain fallthough when we need it :)
+ com64 ok
+ beoran  finally, the case statement has a default:
+ beoran  that's for all missing cases
+ beoran  default: is optional in C, but I recommend you always use it
+ beoran  in our default, we do nothing now (the printf is commented out)
+ com64 ok
+ beoran  this is so we can ignor events that have a type we're not interested in
+ beoran  if you remember python or C++, you probably also more or less have a clue why we do event.kind
+ beoran  event.type I mean
+ com64 I don't remember too much about that tbh
+ beoran  ok, that's fine
+ beoran  event is an SDL_Event.
+ beoran  if you'd look in the header files, you'd see that it is defined as what they call a "struct" in C
+ beoran  a struct is a way to store several simple variables together in one variable.
+ beoran  if you think about an input event, it has a type, and then depending on the type, perhaps a button pressed, or the key pressed, or the mouse coordinates..
+ beoran  all these data are neatly "rolled together" in one SDL_Event package
+ beoran  Such a package is a C struct. The individual items in the package are called the "fields" or the "members" of the struct.
+ beoran  that's why we do event.type
+ beoran  we tell the compiler, look in the struct (package) event, and get me the type of this event out of it.
+ beoran  is that anywhere near clear?
+ com64 pretty clear
+ beoran  good
+ beoran  so now, you actually understand how the program works, at least how it keeps the window open :)
+ com64 okay...
+ beoran  the program just sits there looking for events from SDL, ignoring them until you click the close button
+ com64 It's like 3am right now, lmao...
+   com64 is getting tired.
+ beoran  when the close button is clicked , SDL sends an event with type SDL_QUIT and the nywe set done to true, and the loop exits
+ beoran  ok, let's call it a day then :)
 
