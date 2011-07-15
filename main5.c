@@ -1,6 +1,7 @@
 #include <SDL.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 
 
@@ -335,16 +336,22 @@ int handle_input(Sprite * player) {
 
 
 /** Id's of the sprites. */
-#define SPRITE_PLAYER       0
-#define SPRITE_PBULLET_MIN  1
+
+
+#define SPRITE_STAR_MIN     0
+#define SPRITE_STAR_COUNT   32
+#define SPRITE_STAR_MAX     127
+#define SPRITE_PLAYER       128
+#define SPRITE_PBULLET_MIN  129
 #define SPRITE_PBULLET_MAX  255
 #define SPRITE_FOE_MIN      256
-#define SPRITE_FOE_START    8
+#define SPRITE_FOE_COUNT    8
 #define SPRITE_FOE_MAX      511
 #define SPRITE_FBULLET_MIN  512
 #define SPRITE_FBULLET_MAX  767
-#define SPRITE_EXTRA_MIN    768
-#define SPRITE_EXTRA_MAX    1023
+#define SPRITE_BOOM_MIN     768
+#define SPRITE_BOOM_MAX     1023
+
 
 
 
@@ -355,6 +362,9 @@ int main(void) {
   SDL_Rect      player_rect;
   int           index;
   Uint32        colorkey, black;
+  /* Initialize random generator */
+  srand(time(NULL));
+  /* Prepare sprites for use by wiping them all first. */
   sprites_empty();
      
   // Start SDL
@@ -363,19 +373,27 @@ int main(void) {
   black   = SDL_MapRGB(screen->format, 0, 0, 0);
   
   // Load all images
-  images_load();  
-  // Set up the player's sprite.    
+  images_load();
+  // Set up the player's sprite.
   player  = sprite_start(SPRITE_PLAYER, IMG_PLAYER_1, SpritePlayer, 320, 400, 3);
   // Set up some foes
   for(index = SPRITE_FOE_MIN; 
-      index < (SPRITE_FOE_MIN + SPRITE_FOE_START); index++) {
+      index < (SPRITE_FOE_MIN + SPRITE_FOE_COUNT); index++) {
     int x = (index - SPRITE_FOE_MIN) * 64 + 64;
     int y = 10;
     Sprite * foe = sprite_start(index, IMG_FOE1_1, SpriteFoe, x, y, 1);
     foe->speed_x = 1;
   }
 
-  
+  // Set up some stars
+  for(index = SPRITE_STAR_MIN; 
+      index < (SPRITE_STAR_MIN + SPRITE_STAR_COUNT); index++) {
+    int x = rand() % screen->w;
+    int y = rand() % screen->h;
+    Sprite * star = sprite_start(index, IMG_STAR1_1, SpriteExtra, x, y, 1);
+    // star->speed_y = 1;
+  }
+
   
   if(!player) fail("Could not load player sprite.");  
   
