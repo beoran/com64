@@ -321,3 +321,125 @@ Chat transcript:
 09:36 beoran  the %p is to tell printf that you want to display an address
 09:37 beoran  and &a means"the address of a"
 09:37 beoran  you with me so far? 
+
+09:29 beoran  In C, that's the *only* way to pass variables.
+09:29 beoran  But what about by_address then?
+09:29 beoran  well, in C, if you /want/ a function to change a variable yiu pass to it, you have to do it by passing the address of the variable
+09:29 com64 I don't remember what the * does.
+09:30 beoran  ok, let me explain addresses (or pointers) a bit then :)
+09:30 beoran  as you know, when you do int a = 2; in your main function you're defining a variable.
+09:30 beoran  what happens when the program is run?
+09:31 beoran  the compiler makes it so tha tsome space in the memory of your computer is reserved for the variable a
+09:31 beoran  whenever you use a in main, that space is used
+09:31 beoran  to go back to the postal office metaphor, imagine computer memory to be a large wall full of postal boxes
+09:32 beoran  the CPU is like the mailman that puts letters(data) inside the postal boxes
+09:32 com64 That's how I see it anyway, except I imagine it like keys hung on a wall.
+09:33 beoran  ah, like in a hotell? that's also a nice metaphor.
+09:33 com64 yeah.
+09:33 beoran  so what's an address? well it's just a number by which the CPU knows /which/ place in memory iyt is exactly
+09:34 beoran  if you want to see what that number is
+09:35 beoran  printf("a: %d, b:%d, address of a: %p\n", a, b, &a);
+09:35 beoran  put the above somewhere in the main of program :)
+09:36 beoran  you see, in C the & operator, when used ob n a single variable, is the "address of" operator
+09:36 beoran  the %p is to tell printf that you want to display an address
+09:37 beoran  and &a means"the address of a"
+09:37 beoran  you with me so far?
+09:39 com64 yeah
+09:39 beoran  ok
+09:39 beoran  now then, what's a pointer then?
+09:40 beoran  well, as you can see, you can take the address of a variable. A pointer is actually also a variable, but a slightly special one: it's a variable that can be used to store an address in.
+09:41 com64 hm...
+09:41 beoran  to go back to my mail boxes analogy
+09:41 beoran  let's say the mail man say: ok, the box number 1 , I'll call the stevenson box;
+09:42 beoran  in c you'd say , for example: int stevenson;
+09:42 beoran  and &stevenson would then be 1
+09:43 beoran  and the mailman can then store a note with , say, the number 127 in the "stevenson" box
+09:43 beoran  in c you'd go; stevenson = 127;
+09:44 beoran  but let's say the mailman is forgetful and wants to keep tack of where the stevenson box is
+09:44 beoran  so , he sais, ok, I'l take box number 99 and that I'll call the pointer_to_stevenson box.
+09:45 beoran  and in that box, he puts a note with the address of the stevenson box.
+09:46 beoran  so, whenever he's forgotten where the stevenson box was, he ca nstill ook in the pointer_to_stevenson box, and then see what the number (address) of the stevenson box is, and find it back like that.
+09:47 beoran  in c, you'd go : int * pointer_to_stevenson; the * indicates "pointer to"
+09:47 beoran  and then to store the address of stevenson in pointer_to_stevenson, you do: pointer_to_stevenson = &stevenson;
+09:48 beoran  wait, let me update the tutorial to show this :)
+09:48 com64 okay.
+09:51 beoran  ok, please pull again. I changed the name to jones, though, shorter
+09:52 beoran  com64: please pull again :)
+09:52 com64 This happens:
+09:52 com64 error: Your local changes to the following files would be overwritten by merge:
+09:52 com64 main.c
+09:52 com64 Please, commit your changes or stash them before you can merge.
+09:52 com64 Aborting
+09:53 beoran  yes, that's because you made loca lchanges
+09:53 beoran  just do git stash and then git pull
+09:53 com64 brb; bathroom again
+09:54 beoran  ok I'll go too
+09:56 beoran  back
+10:02 com64 have to print out a schedule... one minute
+10:03 beoran  ok :)
+10:11 com64 back
+10:14 beoran  ok
+10:15 beoran  could you pull the jones changes now?
+10:15 com64 Already did
+10:15 beoran  do you see what's happening so far? jones is a variable that we store 127 in, and in poinetr_to_jones, we store the address of jones.
+10:16 com64 ok
+10:16 beoran  In C , pointer syntax is a bit weird. To define a pointer to a type Type you have to say Type * variable;
+10:17 beoran  lamost like you have to read backward: variable is a pointer to Type.
+10:17 beoran  good, now sppose we have our forgetful mailman who want to put a letter in the jones box.
+10:18 beoran  but he doesn't know what the number(address) of the jones box is
+10:18 beoran  but he knows ha can look inside the pointer_to_jones box to look up the addres of the jones box.
+10:19 beoran  so he looks inside tha pointer_to_jones box, see there's a paper in there which says 1, and then lknows he has to put the letter in the box with address nr 1
+10:20 beoran  in C, you'd do (*pointer_to_jones) = 128; this has the same effect as jones = 128;
+10:21 beoran  the (*pointer) syntax means "look at the address that this pointer points to" and since it's followed by an assignment, the value 128 will be stored there.
+10:23 beoran  or, if you xwant to see wthe value of the variable the pointer points to, just (*pointer) will get that value
+10:23 beoran  is that somewhat clear? if not please ask
+10:23 com64 clear enouggh ;)
+10:24 beoran  so now, do you understand how by_address works?
+10:24 beoran  You can see, that funtion *does* change a where by_value doesn't.
+10:24 com64 yes I get it...
+10:25 beoran  a question then: why do I do (*a) = (*a) + 10 ?
+10:26 com64 hm...
+10:27 beoran  what does the (*a) on the right of the = do ?
+10:27 com64 ah.
+10:27 com64 it...
+10:27 com64 it gets ten added to it.
+10:27 com64 if it was (*a) = 10, then it would just set *a as 10
+10:27 beoran  yes it would
+10:28 beoran  and then what whould the value of a in main() become after you call by_address(&a); ?
+10:28 beoran  if it was as you say?
+10:30 com64 Let's see...
+10:30 beoran  (you can try it yourself by changing by_address) :)
+10:30 beoran  don't hesitate to experiment on details to deepen your understanding.
+10:30 com64 hm... it would be whatever it was before the function?
+10:30 beoran  no
+10:30 com64 hm...
+10:30 com64 let me try..
+10:31 beoran  yes :)
+10:33 com64 In main, it's whatever it's set in by_address
+10:33 beoran  exactly
+10:33 beoran  so what does (*a) = whatever do?
+10:33 beoran  in by address?
+10:34 com64 changes the value of (*a)
+10:34 beoran  hmmm... almost I 'd say
+10:34 com64 (*a) is equal to ...
+10:34 beoran  yes... :)
+10:35 beoran  a hint: what is a in by_address (look at the function arguments)
+10:36 beoran  is a an int (integer) ?
+10:36 com64 a is an integer.
+10:36 com64 int * a
+10:36 beoran  look closely, there's a * there
+10:36 beoran  what does tha t* mean in that context?
+10:36 com64 pointer to?
+10:36 beoran  yes!
+10:37 beoran  so a in by_address is what exactly?
+10:37 com64 pointer to an integer?
+10:37 com64 lol
+10:37 beoran  yes
+10:37 beoran  so if you do *a , what are you doing?
+10:38 beoran  to clarifuy i always put () around *pointer because of precedence rules and problems
+10:38 beoran  (*a) means the same as *a, normally
+10:38 com64 brb, have to move to another room...
+10:38 beoran  ok
+10:39 beoran  you on a laptop or something? :)
+
+
