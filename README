@@ -3,4 +3,135 @@ This is a turtorial for game programming in C using SDL.
 
 Chat transcript:
 
+08:04 beoran  Perhaps I should teach you about github and git a bit first
+08:04 com64 I'll try to make cheesey Gates of Zendocon style explosions...
+08:04 com64 sure
+08:04 beoran  github is a popular web site to host your source code of your programs
+08:04 com64 ah.
+08:05 beoran  I've hosted the tutorial there https://github.com/beoran/com64
+08:05 beoran  now, if you want to work with someone's source code, you have to get it somehow
+08:05 beoran  github, as the name says, is based on the program git
+08:05 com64 git command, amirite?
+08:05 beoran  yes :)
+08:05 beoran  so what's git do?
+08:06 com64 it gits srouce code.
+08:06 com64 :D
+08:06 com64 lol
+08:06 beoran  well, it's a source control or revision control program
+08:06 beoran  com64: yes, that too actually
+08:07 beoran  more crucially, though it helps you 1) keep previous versions of your source code 2) it helps you communicate with other developers
+08:07 com64 I remember using either GIT or SVN for something in Linux Mint...
+08:07 com64 I can't remember what I needed, though.
+08:08 beoran  git works with the concept of repositories
+08:08 beoran  basically a repository is a single project
+08:08 beoran  so, github hosts several of my projects/repositories
+08:09 beoran  now for you to get a copy of my repository on github, you'll have to clone it
+08:09 beoran  to do that , you go "git clone https://github.com/beoran/com64.git"
+08:10 beoran  (you can see the url you need on top of the page in https://github.com/beoran/com64)
+08:10 com64 have to install git first...
+08:10 beoran  ok
+08:11 com64 Okay, done.
+08:12 beoran  ok, so you can now lcne my repoitory
+08:12 beoran  to do that , you go "git clone https://github.com/beoran/com64.git"
+08:13 com64 done
+08:13 beoran  good :)
+08:13 beoran  now, I will push additions to the repoitory which you can "pull"
+08:14 com64 okay
+08:14 beoran  I'l lexplain tha tlater, first go inside the com64 directory, and open main.c in your favorite editor
+08:14 com64 nano :D
+08:14 beoran  that's cool, I prefer kate. Also try the ./build command, it build the main exe for you.
+08:14 beoran  ((build is a litlle shell script that does what I explained before)
+08:15 beoran  does the ./build work for you?
+08:15 com64 yup
+08:15 beoran  as for SDL: if you have any squestions about thow to use it the documentation wiki is noice: http://www.libsdl.org/cgi/docwiki.cgi/
+08:15 beoran  ok, now on with the next step
+08:16 com64 I'll bookmark it...
+08:16 com64 done
+08:16 beoran  as you can see in the program, we're using SDL_SetVideoMode to open a window to draw on
+08:17 beoran  the window is 640x480, and we don't care about the color depth so I just put 0 there
+08:17 com64 okay.
+08:18 beoran  now for SDL_HWSURFACE | SDL_ANYFORMAT
+08:18 com64 just so you know... my screen is only 1024*600... just for future reference...
+08:18 beoran  com64: yeah, but that's certainly too big for a game
+08:18 beoran  for a 2D game, at least
+08:18 com64 mmhm
+08:18 beoran  640x480 is fine :)
+08:18 beoran  now for SDL_HWSURFACE | SDL_ANYFORMAT
+08:18 com64 oaky
+08:19 beoran  do you know what that | does?
+08:19 com64 *sigh*... what is it... I know it...
+08:19 com64 the first one...
+08:19 com64 maps out the screen surface to draw on?
+08:19 beoran  hint it's some kind of poerator...
+08:20 beoran  operator :)
+08:20 com64 okay, I dunno.
+08:20 beoran  | is the binary or operator
+08:20 beoran  do you know a bit about binary numbers?
+08:20 com64 a bit
+08:20 com64 I Can count
+08:20 com64 0
+08:20 com64 1
+08:20 com64 10
+08:20 com64 11
+08:20 com64 etc
+08:20 com64 lol
+08:20 beoran  good
+08:21 com64 I've also done "hex editing"
+08:21 beoran  now the | operator works like this: if there's a 1 i the binary representation on either side, it stays a 1, only if there are 2 0 if becomes 0
+08:22 com64 okay
+08:22 beoran  so 2 | 1 == 10b | 01b == 11b == 3
+08:22 beoran  so 4 | 1 == 100b | 001b == 101b == 5
+08:23 beoran  100b is not valid in c, just a way to show you that I'm using binary notation
+08:23 com64 Okay.
+08:23 beoran  another similar operator is &, the binary and
+08:23 beoran  now the & operator works like this: if there's a 1 in the binary representation on /both/ sides, it stays a 1, otherwise it becomes 0
+08:24 beoran  so 2 | 1 == 10b | 01b == 00b == 0
+08:24 com64 oh, so it checks if they're the same.
+08:24 beoran  so 2 & 1 == 10b & 01b == 00b == 0
+08:24 beoran  I mean sorry, typo
+08:24 beoran  yea, it does, bit per bit
+08:25 com64 I get it
+08:25 beoran  so 3 & 1 == 11b & 01b == 01b == 1
+08:25 beoran  ok
+08:26 beoran  and then there's the binary XOR operatior ^ . It checks if the bits are different nad makes a 1 if they are.
+08:26 beoran  so 3 ^ 1 == 11b & 01b == 10b == 2
+08:26 beoran  so 3 ^ 1 == 11b ^ 01b == 10b == 2
+08:26 beoran  I mean
+08:28 beoran  to check this yourself later you could add a printf("%d \n", 3 | 1); somewhere in your program, so print the results
+08:28 com64 sure
+08:29 beoran  ok, so what is tha t| then? We're just making the binary or of 2 predefined integer constants
+08:29 com64 \n prints the rest on another line, right?
+08:29 beoran  yes, the \n in as tring is a newlne character
+08:29 com64 and \t is tab.
+08:29 beoran  yes
+08:29 com64 and \\ is slash lol
+08:29 beoran  and \" is to quote spaces
+08:29 beoran  yeah
+08:30 beoran  basically, SDL has a lot of integer constants predefined, most of them are used to tell SDL what to do
+08:31 beoran  in C there's several ways to define integer constants
+08:31 beoran  most people tend to use the preprocessor and do #define MAX_SPRITES 64
+08:32 beoran  when you compile c, it works in several stages.
+08:32 beoran  first the "preprocessor" runs, then the c compiler itself
+08:32 com64 I see.
+08:32 beoran  commands to the preprocessor start with #
+08:33 beoran  so, #include <SDL.h> is simply a commadn tha ttells the preprocessor to include that file for us, so we can get the functions that are declared in it and the constants that are defined in it
+08:34 beoran  #include is like an automatic copy/paste, really
+08:34 com64 Okay.
+08:34 beoran  a #define FOO bar tells the preprocessor to replace FOO with bar every time it sees FOO
+08:35 beoran  as a whole. so, this kind of #define is a bit like an automatic search/replace
+08:35 com64 what about... #using namespace randomnamespace?
+08:35 com64 is that used in C?
+08:36 beoran  no, no namespaces in C
+08:36 beoran  that's added by C++
+08:37 beoran  I want to keep it simple, so plain C is nbest to start, i feel. C++ adds hundreds of features to plain C
+08:37 beoran  most of which I feel you don't need for a simple game
+08:38 beoran  once you know c well, learning C++ should be easier too ,and should let you see which features of C++ you need and which ones you odn't
+08:38 com64 okay.
+08:38 beoran  at this point it might be instructive to take a look at the file /usr/include/SDL/SDL_video.h
+08:39 beoran  you'll see a bit down from the top that there are #define SDL_HWSURFACE 0x00000001 and more #defines in there
+08:39 com64 I"m in.
+08:39 beoran  so that's where the SDL_HWSURFACE comes from
+08:40 beoran  when you #include<SDL.h>, the SDL_video.h gets included indirectly, and the #define you see there take effect
+08:41 beoran  you may ask, what's the point of making names for integer constants like that, but 1) it clarifies what the integer means, and 2 you can change the value of the integer later if needed
+08:41 beoran  that clear? :)
 
