@@ -73,11 +73,11 @@ void images_free() {
 
 /** Numbers to refer to the images with.  */
 enum ImageIndex_ {
-  PLAYER_1      = 0,  PLAYER_2,
-  STAR1_1          ,  STAR1_2,
-  BULLET1_1        ,  BULLET1_2,
-  BULLET2_1        ,  BULLET2_2,
-  FOE1_1           ,  FOE1_2,
+  IMG_PLAYER_1      = 0,  IMG_PLAYER_2,
+  IMG_STAR1_1          ,  IMG_STAR1_2,
+  IMG_BULLET1_1        ,  IMG_BULLET1_2,
+  IMG_BULLET2_1        ,  IMG_BULLET2_2,
+  IMG_FOE1_1           ,  IMG_FOE1_2,
 };
 
 /** Names of bitmaps to load, must match with list above */
@@ -124,7 +124,7 @@ struct Sprite_ {
 };
 typedef struct Sprite_ Sprite;
 
-#define SPRITES_MAX 128
+#define SPRITES_MAX 1024
 Sprite sprites[SPRITES_MAX]; 
 
 /** empties a sprite before use. */
@@ -181,8 +181,8 @@ void sprites_draw(SDL_Surface * screen) {
 
 #define SPRITE_FILENAME_MAX 1000
 
-/** Loads a single sprite with full options. */
-Sprite * sprite_loadfull(Sprite * sprite, int image, int type, 
+/** Starts using a sprote a single sprite with full options. */
+Sprite * sprite_startfull(Sprite * sprite, int image, int type, 
                          int x, int y, int health) {
   char filename[SPRITE_FILENAME_MAX];   
   sprite->image     = image_get(image);
@@ -197,12 +197,12 @@ Sprite * sprite_loadfull(Sprite * sprite, int image, int type,
   return sprite;
 }
 
-// Loads the sprite into sprites at the given index.
-Sprite * sprite_loadindex(int index, int image, int type, int x, int y, 
+/** Starts using the sprite the sprite into sprites at the given index. */
+Sprite * sprite_start(int index, int image, int type, int x, int y, 
                           int health) {
   Sprite * sprite = sprites + index; 
   sprite_done(sprite); // Clean up sprite before using.
-  return sprite_loadfull(sprite, image, type, x, y, health);
+  return sprite_startfull(sprite, image, type, x, y, health);
 }
 
 
@@ -221,7 +221,7 @@ Sprite * sprite_player_update(Sprite * sprite, SDL_Surface * screen) {
 
 /** Updates the case of a bullet sprite. */
 Sprite * sprite_bullet_update(Sprite * sprite, SDL_Surface * screen) {
-  /** If bullet leaves screen, it is deactivated */
+  /* If bullet leaves screen, it is deactivated */
   if(sprite->box.x < 0) sprite->active = FALSE;
   if(sprite->box.y < 0) sprite->active = FALSE;
   if(sprite->box.x > screen->w) sprite->active = FALSE;  
@@ -231,7 +231,12 @@ Sprite * sprite_bullet_update(Sprite * sprite, SDL_Surface * screen) {
 
 /** Updates the case of the foe sprite. */
 Sprite * sprite_foe_update(Sprite * sprite, SDL_Surface * screen) {
-  // do nothing yet
+  // Turn around foes. 
+  if(sprite->box.x < 0) sprite->speed_x = - sprite->speed_x;
+  if(sprite->box.x + sprite->box.w > screen->w) { 
+    sprite->speed_x = - sprite->speed_x;
+  }  
+  
 }
 
 /** Updates the case of the extra sprite. */
@@ -329,13 +334,26 @@ int handle_input(Sprite * player) {
 }
 
 
-#define PLAYER 0
+/** Id's of the sprites. */
+#define SPRITE_PLAYER       0
+#define SPRITE_PBULLET_MIN  1
+#define SPRITE_PBULLET_MAX  255
+#define SPRITE_FOE_MIN      256
+#define SPRITE_FOE_START    8
+#define SPRITE_FOE_MAX      511
+#define SPRITE_FBULLET_MIN  512
+#define SPRITE_FBULLET_MAX  767
+#define SPRITE_EXTRA_MIN    768
+#define SPRITE_EXTRA_MAX    1023
+
+
 
 
 int main(void) {
   SDL_Surface * screen    = NULL;
   Sprite      * player    = NULL;
   SDL_Rect      player_rect;
+  int           index;
   Uint32        colorkey, black;
   sprites_empty();
      
@@ -347,7 +365,17 @@ int main(void) {
   // Load all images
   images_load();  
   // Set up the player's sprite.    
-  player  = sprite_loadindex(PLAYER, PLAYER_1, SpritePlayer, 320, 400, 3);
+  player  = sprite_start(SPRITE_PLAYER, IMG_PLAYER_1, SpritePlayer, 320, 400, 3);
+  // Set up some foes
+  for(index = SPRITE_FOE_MIN; 
+      index < (SPRITE_FOE_MIN + SPRITE_FOE_START); index++) {
+    int x = (index - SPRITE_FOE_MIN) * 64 + 64;
+    int y = 10;
+    Sprite * foe = sprite_start(index, IMG_FOE1_1, SpriteFoe, x, y, 1);
+    foe->speed_x = 1;
+  }
+
+  
   
   if(!player) fail("Could not load player sprite.");  
   
