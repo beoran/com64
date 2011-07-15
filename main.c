@@ -14,13 +14,23 @@
 
 int done = FALSE;
   
+int by_value(int a) { 
+  a = a + 10; 
+  return a; 
+}   
 
 int main(void) {
+  int a = 2;
+  int b = 0;
   SDL_Surface * screen        = NULL;
   SDL_Surface * sprites[MAX_SPRITES];
   SDL_Surface * player_sprite = NULL; 
   // Friendly message.
   puts("Hello world!");
+  b = by_value(a);
+  printf("a: %d, b:%d \n", a, b); 
+  
+  
   // Start SDL
   SDL_Init(SDL_INIT_EVERYTHING);
   screen = SDL_SetVideoMode(640, 480, 0, SDL_HWSURFACE | SDL_ANYFORMAT);
