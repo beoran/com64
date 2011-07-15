@@ -22,7 +22,8 @@ int by_value(int a) {
    
 /* A function that passes it's argument by address . */
 int by_address(int * a) { 
-  (*a) = (*a) + 10; 
+  // (*a) = (*a) + 10;
+  (*a) = 10; 
   return (*a); 
 }   
    
@@ -38,7 +39,7 @@ int main(void) {
   jones            = 127; 
   pointer_to_jones = &jones;
   
-  printf("jones: %d, pointer to jones: %p\n", jones, pointer_to_jones);
+  printf("jones: %d, pointer to jones: %p, follow pointer_to_jones: %d\n", jones, pointer_to_jones, (*pointer_to_jones));
    
   // Friendly message.
   puts("Hello world!");
