@@ -17,7 +17,13 @@ int done = FALSE;
 int by_value(int a) { 
   a = a + 10; 
   return a; 
+}
+   
+int by_address(int * a) { 
+  (*a) = (*a) + 10; 
+  return (*a); 
 }   
+   
 
 int main(void) {
   int a = 2;
@@ -28,7 +34,9 @@ int main(void) {
   // Friendly message.
   puts("Hello world!");
   b = by_value(a);
-  printf("a: %d, b:%d \n", a, b); 
+  printf("a: %d, b:%d \n", a, b);
+  b = by_address(&a);
+  printf("a: %d, b:%d \n", a, b);  
   
   
   // Start SDL
