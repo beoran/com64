@@ -21,11 +21,11 @@ int by_value(int a) {
 }
    
 /* A function that passes it's argument by address . */
-int by_address(int * a) { 
+int by_address(int * pointer) { 
   // (*a) = (*a) + 10;
-  printf("In by_address: a: %p, (*a): %i\n", a, *a);
-  (*a) = 10; 
-  return (*a); 
+  printf("In by_address: pointer: %p, (*pointer): %i\n", pointer, *pointer);
+  (*pointer) = 10; 
+  return (*pointer); 
 }   
    
 
