@@ -14,11 +14,13 @@
 
 int done = FALSE;
   
+/* A function that passes it's argument by value . */ 
 int by_value(int a) { 
   a = a + 10; 
   return a; 
 }
    
+/* A function that passes it's argument by address . */
 int by_address(int * a) { 
   (*a) = (*a) + 10; 
   return (*a); 
