@@ -76,6 +76,7 @@ void images_free() {
 enum ImageIndex_ {
   IMG_PLAYER_1      = 0,  IMG_PLAYER_2,
   IMG_STAR1_1          ,  IMG_STAR1_2,
+  IMG_BOOM1_1          ,  IMG_BOOM1_2,
   IMG_BULLET1_1        ,  IMG_BULLET1_2,
   IMG_BULLET2_1        ,  IMG_BULLET2_2,
   IMG_FOE1_1           ,  IMG_FOE1_2,
@@ -85,6 +86,7 @@ enum ImageIndex_ {
 char * image_names[] = { 
   "player_1.bmp" , "player_2.bmp" ,
   "star1_1.bmp"  , "star1_2.bmp"  ,
+  "boom1_1.bmp"  , "boom1_2.bmp"  ,
   "bullet1_1.bmp", "bullet1_2.bmp",
   "bullet2_1.bmp", "bullet2_2.bmp",
   "foe1_1.bmp"   , "foe1_2.bmp"   ,
@@ -102,6 +104,21 @@ int images_load() {
   return 0;
 }
 
+/** Id's of the sprites. */
+#define SPRITE_STAR_MIN     0
+#define SPRITE_STAR_COUNT   32
+#define SPRITE_STAR_MAX     127
+#define SPRITE_PLAYER       128
+#define SPRITE_PBULLET_MIN  129
+#define SPRITE_PBULLET_MAX  255
+#define SPRITE_FOE_MIN      256
+#define SPRITE_FOE_COUNT    8
+#define SPRITE_FOE_MAX      511
+#define SPRITE_FBULLET_MIN  512
+#define SPRITE_FBULLET_MAX  767
+#define SPRITE_BOOM_MIN     768
+#define SPRITE_BOOM_MAX     1023
+#define SPRITES_MAX         1024
 
 enum SpriteType_ {
   SpriteNone        = 0,
@@ -125,7 +142,7 @@ struct Sprite_ {
 };
 typedef struct Sprite_ Sprite;
 
-#define SPRITES_MAX 1024
+
 Sprite sprites[SPRITES_MAX]; 
 
 /** empties a sprite before use. */
@@ -183,7 +200,7 @@ void sprites_draw(SDL_Surface * screen) {
 #define SPRITE_FILENAME_MAX 1000
 
 /** Starts using a sprote a single sprite with full options. */
-Sprite * sprite_startfull(Sprite * sprite, int image, int type, 
+Sprite * sprite_startone(Sprite * sprite, int image, int type, 
                          int x, int y, int health) {
   char filename[SPRITE_FILENAME_MAX];   
   sprite->image     = image_get(image);
@@ -203,7 +220,7 @@ Sprite * sprite_start(int index, int image, int type, int x, int y,
                           int health) {
   Sprite * sprite = sprites + index; 
   sprite_done(sprite); // Clean up sprite before using.
-  return sprite_startfull(sprite, image, type, x, y, health);
+  return sprite_startone(sprite, image, type, x, y, health);
 }
 
 
@@ -277,6 +294,39 @@ void sprites_update(SDL_Surface * screen) {
   }
 }
 
+/** Finds an unused (not active) sprite in the given range. */
+Sprite * sprites_unused(int min, int max) {
+  int index;
+  for(index = min; index <= max; index ++) {
+    Sprite * result = sprites + index;
+    if(!(result->active)) return result;
+  }
+  return NULL;
+}
+
+
+/** Makes a new bullet for the player */
+Sprite * sprites_newplayerbullet(Sprite * player, int health) {
+  int x, y;
+  Sprite * bullet = sprites_unused(SPRITE_PBULLET_MIN, SPRITE_PBULLET_MAX);
+  if(!bullet) return NULL;
+  x = player->box.x + (player->box.w / 2) - (images[IMG_BULLET1_1]->w / 2);
+  y = player->box.y;
+  sprite_startone(bullet, IMG_BULLET1_1, SpritePlayerBullet, x, y, health);
+  bullet->speed_y = -1;
+}
+
+/** Makes a new bullet for a foe */
+Sprite * sprites_newfoebullet(Sprite * foe, int health) {
+  int x, y;
+  Sprite * bullet = sprites_unused(SPRITE_PBULLET_MIN, SPRITE_PBULLET_MAX);
+  if(!bullet) return NULL;
+  x = foe->box.x + (foe->box.w / 2) - (images[IMG_BULLET2_1]->w / 2);
+  y = foe->box.y + foe->box.h;
+  sprite_startone(bullet, IMG_BULLET2_1, SpriteFoeBullet, x, y, health);
+  bullet->speed_y = 1;
+}
+
 
 int handle_input(Sprite * player) {
   SDL_Event event;
@@ -301,6 +351,9 @@ int handle_input(Sprite * player) {
         case SDLK_DOWN: 
           player->speed_y = 2;
         break;
+        case SDLK_SPACE:
+          sprites_newplayerbullet(player, 1);
+        break; 
         case SDLK_q:
         case SDLK_ESCAPE:
           done = TRUE;
@@ -334,23 +387,55 @@ int handle_input(Sprite * player) {
   }
 }
 
+#define FOE_BULLET_CHANCE 500
 
-/** Id's of the sprites. */
+void handle_foe(Sprite * foe, Sprite * player) {
+  if(!(rand() % FOE_BULLET_CHANCE)) {
+    sprites_newfoebullet(foe, 1);
+  }
+}
 
+void handle_foes(Sprite * player) {
+  int index;
+  for (index = SPRITE_FOE_MIN; index <= SPRITE_FOE_MAX; index++) {
+    Sprite * foe = sprites + index;
+    if (foe->active) {
+      handle_foe(foe, player);
+    }
+  }
+}
 
-#define SPRITE_STAR_MIN     0
-#define SPRITE_STAR_COUNT   32
-#define SPRITE_STAR_MAX     127
-#define SPRITE_PLAYER       128
-#define SPRITE_PBULLET_MIN  129
-#define SPRITE_PBULLET_MAX  255
-#define SPRITE_FOE_MIN      256
-#define SPRITE_FOE_COUNT    8
-#define SPRITE_FOE_MAX      511
-#define SPRITE_FBULLET_MIN  512
-#define SPRITE_FBULLET_MAX  767
-#define SPRITE_BOOM_MIN     768
-#define SPRITE_BOOM_MAX     1023
+int sprite_collide(Sprite * s1, Sprite * s2) {
+  int mx1, mx2, my1, my2, r1 ,r2, d2, t2;
+  if (s1->type == s2-> type) return FALSE;
+  mx1 = s1->box.x + (s1->box.w / 2);
+  mx2 = s2->box.x + (s2->box.w / 2);
+  my1 = s1->box.y + (s1->box.h / 2);
+  my2 = s2->box.y + (s2->box.h / 2);
+  r1  = s1->box.w < s1->box.h ? s1->box.w : s1->box.h;
+  r2  = s2->box.w < s2->box.h ? s2->box.w : s2->box.h;
+  d2  = (mx2-mx1)*(mx2-mx1) + (my2-my1)*(my2-my1);
+  t2  = (r1+r2)*(r1+r1);
+  if(t2 < d2) return FALSE;
+  printf("Collision %d %d! \n", t2, d2);
+  return TRUE;
+}
+
+void handle_collisions(Sprite * player) {
+  int i1, i2;
+  Sprite * s1, * s2;
+  /// collide everything with everything...
+  for (i1 = 0       ; i1 < SPRITES_MAX; i1++) {
+    s1 = sprites + i1;
+    if (!s1->active) continue;
+    for(i2 = i1 + 1 ; i2 < SPRITES_MAX; i2++) {
+      s2 = sprites + i2;
+      if (!s2->active) continue;
+      sprite_collide(s1, s2);
+    }
+  }
+  
+}
 
 
 
@@ -400,6 +485,10 @@ int main(void) {
   while(!done) {
     /* Handle the input, which modifies the player's state. */
     handle_input(player);
+    /* AI (ie, let the computer decide what the foes should do */
+    handle_foes(player);
+    /* Handle collisions. */
+    handle_collisions(player);
     /* Update all sprites. */
     sprites_update(screen);
     /* Clear the screen.  */
