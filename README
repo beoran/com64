@@ -733,3 +733,255 @@ Chat transcript:
  beoran  when the close button is clicked , SDL sends an event with type SDL_QUIT and the nywe set done to true, and the loop exits
  beoran  ok, let's call it a day then :)
 
+----
+
+23:42 beoran3 com64: ok, is there anything not clear
+23:42 com64 always trying to hug me... way to often...
+23:42 beoran3 so far?
+23:42 com64 actually,
+23:43 com64 let me think
+23:43 Triverske doom @ 800*480 is heaven
+23:43 com64 what is:
+23:43 com64 Uint32 colorkey = 0;
+23:43 beoran3 ok, Uint32 is a type that SDL defines
+23:44 beoran3 it's basicallu an unsigned integer that can hold at exactly 32 binary bits
+23:44 beoran3 we use it to store the colorkey
+23:44 beoran3 SDL uses Uint32 internally for many things, including device-specificcolors
+23:44 com64 Okay.
+23:45 ps2chiper im back
+23:45 beoran3 anything else unclear?
+23:45 com64 not really
+23:45 ps2chiper what game will you make, triverske
+23:45 beoran3 ok, good, let's look back to the main function then
+23:45 com64 o
+23:45 com64 k
+23:46 Triverske several ports, as well as this excellent boxhead clone I've been working on
+23:46 beoran3 player_rect.x = 320; player_rect.y = 240; player_rect.w = player_sprite->w; player_rect.h = player_sprite->h;
+23:46 Triverske I have an FPS too
+23:46 beoran3 when you look at player rect, you'll see that it is a SDL_Rect , a rectangle type that SDL defines
+23:47 beoran3 it has an x and y field for tehe top left position, and a han w field for the height and width
+23:47 beoran3 player_rect will be used to tell SDL where to draw the layer sprite, and how to draw it.
+23:48 beoran3 so, what do you think player_rect.x = 320; player_rect.y = 240; will do?
+23:48 com64 Set the width and height of the object?
+23:48 com64 wait
+23:49 com64 set's the starting position actually.
+23:49 beoran3 exactly
+23:49 beoran3 and the player_rect.w = player_sprite->w; player_rect.h = player_sprite->h ?
+23:49 Exophase  We should hold seminars where beoran3 teaches people how to make games :D
+23:49 com64 width and height, I guess.
+23:49 com64 :D
+23:49 beoran3 Exophase: I'm gamee :)
+23:49 com64 and he can go theocratic on everybody.
+23:49 com64 lmao
+23:49 Triverske I'm cool with it
+23:49 ps2chiper well, let me know when you want to talk marketing. all this is above me
+23:49 beoran3 Im in, if you cross my palm with gold
+23:50 com64 lol
+23:50 beoran3 seriously, for tax reasons 'll be accepting payments in gold.
+23:50 Triverske next teach us quantum physics
+23:50 Exophase  But what's really needed is graphical talent I think.
+23:50 Exophase  And people who are good at level design and stuff.
+23:50 beoran3 Exophase: also
+23:51 com64 How about regular physic?
+23:51 com64 s
+23:51 beoran3 I'm a licenced physics, chemistry , biology and lower maths teacher.
+23:51 com64 I have little artistic talent :(
+23:51 Triverske Exophase: it's been proven that there aren't enough programmers
+23:51 Exophase  beoran3; Neat.
+23:51 beoran3 physics is right up my alley
+23:51   com64 likes physics...
+23:51 beoran3 If I didn't forget from all these years as a programmer
+23:52   com64 also likes math.
+23:52 Exophase  Triverske; Maybe I'm coming from different communities, but to me programming seems like the easier part, and the real talent is needed for graphics, area design and whatever (depending on the game), and to some extent music.
+23:52 beoran3 com64: and ou're right it sets withd and heigh
+23:52 Triverske when I was like 14 I wanted to make a fangame, I found pretty much everyone but a programmer
+23:52 beoran3 Exophase: programming looks easy oif you're aprogrammer
+23:53 Exophase  I've just known a LOT of programmers but not a lot of artists or level designers.
+23:53 Exophase  There's just much less "art" to it.
+23:53 beoran3 Exophase: YMMV
+23:53 com64 Exo, I'm getting into game design next year (JOY!)
+23:53 com64 hopefully.
+23:53 Exophase  I've known people who have done games themselves..
+23:53 beoran3 com64: you should be wondering about one thing, though:
+23:53 Exophase  Like if you've ever heard of Meritous
+23:54 com64 yeah?
+23:54 beoran3 player_rect.w = player_sprite->w;
+23:54 beoran3 why is it . in the first one and -> in the second one?
+23:54 Exophase  Anyway there's a reason I do emulators and not games ;p When I was young I very much wanted to make a game, although in a program called Megazeux.
+23:54 com64 hm...
+23:54 com64 Now I am wondering.
+23:55 beoran3 look back at the declaration of player_sprite
+23:55 Kutagh  com64, game design as in designing games (and not so much developing them)?
+23:55 Exophase  The only thing I've ever accomplished there is competing in 24 hour competitions, and the only reason those worked at all is because I teamed with two other people every time.
+23:55 Exophase  I was working on a game with my best friend, he does a good job at graphics and areas for these things (he's a programmer too, though)
+23:55 beoran3 SDL_Surface * player_sprite
+23:55 Exophase  But those just take so much.. work.
+23:55 Exophase  I did some graphics too, like, I did all the sprite animations.
+23:55 beoran3 what does the * stand for again ?
+23:55 Exophase  But it was just too much compared to doing oding.
+23:55 Exophase  .. coding
+23:55 Triverske We come from different sides of the internet Exophase
+23:55 Exophase  beoran3; Multiplication!
+23:56 beoran3 in that context, no.
+23:56 com64 * = pointer to.
+23:56 Exophase  You're multiplying SDL_Surface by player_sprite.
+23:56 Exophase  Sorry, I'll be quiet ;p
+23:56 beoran3 com64: good!
+23:56 com64 exo, lmao
+23:56 beoran3 so, player_sprite is what?
+23:57 Exophase  Hey beoran3, you can give me a C quiz if you want ;p
+23:57 beoran3 Exophase: I tutor first and then quiz after :)
+23:57 Exophase  Mmmm
+23:57 Exophase  Okay.
+23:57 Exophase  But make my quiz slightly harder than his.
+23:58 com64 player_sprite is...
+23:58 Exophase  Installing eagle, btw.
+23:58 beoran3 Exophase: you'll need to download the tutorial at https://github.com/beoran/com64
+23:58 Exophase  I'm going to need to get a good feel for where everyone is on their electrical skills.
+23:58 com64 the player sprite :P
+23:58 Exophase  So we can scrape together what we have.
+23:58 Exophase  I think emusan and com64 both have some experience..
+23:59 beoran3 com64: yes, but what type is it in C.. ou said it yourself, * means "pointer to", so in one word, player_sprite is what?
+23:59 com64 experience in electrical skills? some.
+23:59 com64 I guess..
+23:59 com64 oh
+23:59 com64 pointer to sdl_surface
+23:59 beoran3 exactky, so it's a pointer
+23:59 Exophase  emusan said he knows some experts, so at least we can get some people in for consulting. I do too..
+00:00 beoran3 com64: now look at SDL_Rect player_rect
+00:00 beoran3 you'll notince something different?
+00:00 Triverske i need emusan to program for me so I can do everything else
+00:00 com64 okay
+00:00 com64 let me see
+00:01 com64 I don't see the pointer operator.
+00:01 beoran3 exactly
+00:01 beoran3 so is player_rect a pointer?
+00:01 com64 I wouldn't think so.
+00:01 beoran3 exactly!
+00:02 beoran3 it's the struct itself
+00:02 beoran3 so that's the difference between player_sprite and player_rect
+00:02 beoran3 the first is a pointer and the second isn't
+00:03 Exophase  com64 is pretty sharp.
+00:03 beoran3 thyts why you need to use -> for ythe first and . for the second
+00:03 com64 brb
+00:03 beoran3 ok
+00:04 beoran3 Exophase: you'd like a tiny C quiz now?
+00:04 Exophase  Go ahead.
+00:06 beoran3 if you see a function call in C that looks like function(&variable), what is likely to happen to variable?
+00:07 Exophase  The address of the variable's storage will be passed, as a pointer, to function.
+00:07 beoran3 sure, and why would you do that?
+00:07 Exophase  There are a few good reasons.
+00:07 beoran3 most commonly, thoug?
+00:08 Exophase  The two most typical are to be able to modify variable, and to save on the amount of data that has to be passed to the function. Typically when giving a function access to a struct.
+00:08 beoran3 correct :)
+00:08 beoran3 typedef void * (SiWalker)(void * now, void * key, void * bunch, void * extra);
+00:09 beoran3 what is SiWalker, and how could you use it?
+00:09 Exophase  SiWalker is a function pointer type, for a function that takes four void pointers and returns a void pointer. You'd use it so you don't have to declare function pointers in the same format later, because that's a pain in the ass and no one remembers it exactly.
+00:10 beoran3 almost,
+00:10 Exophase  So you use it to declare the type of a variable that'll point to a function of that format.
+00:10 beoran3 I tricked you
+00:10 beoran3 look well
+00:10 beoran3 (SiWalker)
+00:10 Exophase  Is that right? I told you no one remembers the syntax for function pointers well ;p
+00:10 beoran3 is theere a * there?
+00:10 Exophase  Oh. No, there isn't.
+00:11 Exophase  So you're just declaring a function type.
+00:11 Exophase  But that's pretty unusual.
+00:11 beoran3 so hat did I typedef?
+00:11 Exophase  A function.
+00:11 beoran3 Exophase: correct, just a function type
+00:11 beoran3 I don't like to hide pointerness
+00:11 Exophase  Now WHY you'd want to do that, I think that's just confusing ;p
+00:11 Exophase  Oh, alright.
+00:11 Exophase  Fair enough. I've never took that stance.
+00:11 beoran3 I don't like to hide the fact tha tit is a pointer
+00:12 Exophase  But I can understand where you're coming from. It's just in the context, it's pretty obvious it is.
+00:12 beoran3 so you 'd use it as SiWalker *, nd all would see it's a function pointer
+00:12 Exophase  I wouldn't do that for data pointers though.
+00:12 Exophase  That's not a bad idea though, I guess.
+00:12 beoran3 I do it also dor data pointers
+00:12 beoran3 look at, say SDL,
+00:12 Exophase  Yeah I do it for data pointers.
+00:12 Exophase  I don't make pointer types.
+00:13 Exophase  But you can't instantiate functions just anywhere.
+00:13 Exophase  Since a function isn't a first class/data type in C.
+00:13 beoran3 Exophase: no, ut you may typedef them anywhere
+00:13 beoran3 whic hbrings me to
+00:13 Exophase  You're right, you can use the type for function instantiation. But I don't like doing that.
+00:13 Exophase  Or can you really? I never have.
+00:14 Exophase  If you can, you're obscuring the parameter names et al
+00:14 beoran3 no, you can't
+00:14 beoran3 not in ANSI C, at least
+00:14 Exophase  Then yeah..
+00:14 beoran3 it's just because I don't like to hide the pointers , that's all
+00:14 Exophase  Okay, so you tricked me ;p
+00:14 Exophase  Wanna try to trick me more?
+00:15 beoran3 let's see
+00:16 beoran3 you see this in a header file: struct Foo_; typedef struct Foo_ Foo; Foo * foo_new(); void foo_free(Foo * foo); int foo_frobnicate(Foo * foo);
+00:16 beoran3 what would you say Foo is?
+00:17 beoran3 why would you use such declarations?
+00:17 Exophase  Hold on, I'm going to expand that in a file.
+00:18 Exophase  Foo is a type alias for struct Foo_, which is an incomplete structure declaration. Or you could call it an opaque declaration, I suppose.
+00:18 beoran3 good
+00:18 beoran3 why would you do that?
+00:19 Triverske you people and your C, I envy you
+00:19 Exophase  Usually you do a partial declaration like this is because you have the complete declaration coming later, but you need a pointer in something else. Possibly because you have a circular dependency.
+00:19 beoran3 yes, but there's also another good reason to do this
+00:19 Exophase  Or you could just not feel like including the header that has the declaration for some reason.. ;p
+00:20 beoran3 ys, you're close
+00:20 Exophase  Where "this" is doing the struct _Foo part separately from the typedef part?
+00:20 Exophase  Instead of using an anonymous struct declaration in the typedef?
+00:20 beoran3 no,
+00:20 beoran3 I mean, the hole idiom seen as a whole.
+00:21 Exophase  Why you're doing a typedef to begin with?
+00:21 beoran3 whole design pattern if you like
+00:21 Exophase  Because you'd rather type Foo than struct _Foo? ;p
+00:21 Exophase  Are you talking about data hiding here?
+00:21 Exophase  Encapsulation et al
+00:21 beoran3 yes! that's it :)
+00:21 Exophase  Goodie.
+00:21 beoran3 this is one way to do encapulation in plain C
+00:22 Exophase  Are you going to quiz me on how to do inheritance in C?
+00:22 beoran3 good queston
+00:22 Exophase  People don't like me when I do that.
+00:22 beoran3 can you do it in less than 20 lines of C? :)
+00:22 beoran3 I love inheritance in plain C
+00:22 Exophase  Qualify "it"
+00:22 Exophase  Give me a real problem.
+00:23 beoran3 hmmm.. the circle/ellipse problem
+00:23 Exophase  That seems like a bad excercise for inheritance, something I'd rather use construction/specialization on.
+00:24 Exophase  With a circle being a specialization of ellipse..
+00:24   com64 is back
+00:24 beoran3 ok, I chave to help com64 a bit now. :)
+00:24 Exophase  'kay
+00:24 com64 joy!
+00:25 beoran3 switch
+00:25 beoran3 klook at the swithc statement
+00:25 com64 hm...
+00:25 beoran3 youl'll see new cases hace beenadded
+00:26 com64 you mean in while(!done)?
+00:27 beoran3 yes
+00:27 com64 I see keyboard control of the palyer
+00:27 beoran3 case SDL_KEYDOWN:
+00:27 com64 and the speed of movement.
+00:27 beoran3 yes, thats' what it is :)
+00:28 com64 I know some of this from GML (game maker language)
+00:28 beoran3 keyboard control to set the speed of the player
+00:28 beoran3 SDL_KEYDOWN is an event that heppens when the key is pressed for the first time
+00:28 com64 and increasing the distance from zero would make it faster, right? iirc, it's how many pixels in that direction it moves...
+00:29 beoran3 SDL_KEYUP happens when the key is released
+00:29 com64 I see.
+00:29 Triverske brb
+00:29 com64 brb...
+00:29   *** Triverske quit (Quit: Triverske has left the building)
+00:30 beoran3 player_rect.x += player_speed_x; adds the speed of the player to th player's drawing position.
+00:30 beoran3 same for y
+00:31 beoran3 if(player_rect.x < 0) player_rect.x = 0; and the 4 following lines keep the player inside the screen
+00:31 beoran3 SDL_FillRect(screen, NULL, black); clears the screen to black (comment it out to see what happens if you omit it)
+00:32 beoran3 SDL_BlitSurface(player_sprite, NULL, screen, &player_rect); draws the player sprite to the screeen
+00:32   *** Triverske joined #eon
+00:32   +++ ChanServ has given owner to Triverske
+00:32   +++ ChanServ has given op to Triverske
+00:33 beoran3 SDL_Flip(screen); makes sure that the changedswe make to the screen are actually shown. on most systems nothing phappens and you get a black screen if you forget SDL_Flip(screen);
+00:33 beoran3 and that's all there is to it for now
+

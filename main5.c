@@ -126,24 +126,84 @@ enum SpriteType_ {
   SpritePlayerBullet= 2,
   SpriteFoe         = 3,
   SpriteFoeBullet   = 4,
-  SpriteExtra       = 5,
+  SpriteStar        = 5,
+  SpriteBoom        = 6,
+  SpriteTypeLast    = 7,
 };
+
+struct Sprite_;
+typedef struct Sprite_ Sprite;
+
+typedef Sprite * (SpriteCollider)(Sprite * self, Sprite * other);
+typedef Sprite * (SpriteUpdater)(Sprite * self, SDL_Surface * screen);
 
 
 struct Sprite_ {
-  SDL_Surface * image;
-  SDL_Rect      box;
-  int           type;
-  int           health;
-  int           active;
-  int           speed_x;
-  int           speed_y;
-  Uint32        timer;
+  SDL_Surface *   image;
+  SDL_Rect        box;
+  int             type;
+  int             health;
+  int             active;
+  int             speed_x;
+  int             speed_y;
+  Uint32          timer;
+  SpriteCollider *hit;
+  SpriteUpdater  *update;
 };
-typedef struct Sprite_ Sprite;
+
 
 
 Sprite sprites[SPRITES_MAX]; 
+
+Sprite * sprite_startone(Sprite * sprite, int image, int type, 
+                         int x, int y, int health);
+
+/** Finds an unused (not active) sprite in the given range. */
+Sprite * sprites_unused(int min, int max) {
+  int index;
+  for(index = min; index <= max; index ++) {
+    Sprite * result = sprites + index;
+    if(!(result->active)) return result;
+  }
+  return NULL;
+}
+
+
+/** Makes a new bullet for the player */
+Sprite * sprites_newplayerbullet(Sprite * player, int health) {
+  int x, y;
+  Sprite * bullet = sprites_unused(SPRITE_PBULLET_MIN, SPRITE_PBULLET_MAX);
+  if(!bullet) return NULL;
+  x = player->box.x + (player->box.w / 2) - (images[IMG_BULLET1_1]->w / 2);
+  y = player->box.y;
+  sprite_startone(bullet, IMG_BULLET1_1, SpritePlayerBullet, x, y, health);
+  bullet->speed_y = -1;
+  return bullet;
+}
+
+/** Makes a new bullet for a foe */
+Sprite * sprites_newfoebullet(Sprite * foe, int health) {
+  int x, y;
+  Sprite * bullet = sprites_unused(SPRITE_PBULLET_MIN, SPRITE_PBULLET_MAX);
+  if(!bullet) return NULL;
+  x = foe->box.x + (foe->box.w / 2) - (images[IMG_BULLET2_1]->w / 2);
+  y = foe->box.y + foe->box.h;
+  sprite_startone(bullet, IMG_BULLET2_1, SpriteFoeBullet, x, y, health);
+  bullet->speed_y = 1;
+  return bullet;
+}
+
+/** Makes a new boom (explosion) */
+Sprite * sprites_newboom(Sprite * near) {
+  int x, y;
+  Sprite * boom = sprites_unused(SPRITE_BOOM_MIN, SPRITE_BOOM_MAX);
+  if(!boom) return NULL;
+  x = near->box.x;
+  y = near->box.y;
+  sprite_startone(boom, IMG_BOOM1_1, SpriteBoom, x, y, 2);
+  return boom;
+}
+
 
 /** empties a sprite before use. */
 Sprite * sprite_empty(Sprite * sprite) {
@@ -155,6 +215,8 @@ Sprite * sprite_empty(Sprite * sprite) {
   sprite->timer   = 0;
   sprite->speed_x = 0;
   sprite->speed_y = 0;
+  sprite->hit     = NULL;
+  sprite->update  = NULL;
   return sprite;
 }
 
@@ -182,6 +244,11 @@ int sprite_enabled(Sprite * sprite) {
   return TRUE; 
 }
 
+/** Returns the amount of millliseconds the sprite has been active */
+Uint32 sprite_activetime(Sprite * self) {
+  return SDL_GetTicks() - self->timer;
+}
+
 /** Draw a single sprite to the screen. */
 void sprite_draw(Sprite * sprite, SDL_Surface * screen) { 
   if(!sprite_enabled(sprite)) return;
@@ -198,31 +265,6 @@ void sprites_draw(SDL_Surface * screen) {
 }
 
 #define SPRITE_FILENAME_MAX 1000
-
-/** Starts using a sprote a single sprite with full options. */
-Sprite * sprite_startone(Sprite * sprite, int image, int type, 
-                         int x, int y, int health) {
-  char filename[SPRITE_FILENAME_MAX];   
-  sprite->image     = image_get(image);
-  if(!sprite->image) return NULL;
-  sprite->box.x     = x;
-  sprite->box.y     = y;
-  sprite->box.w     = sprite->image->w;
-  sprite->box.h     = sprite->image->h;  
-  sprite->health    = health;
-  sprite->type      = type;  
-  sprite->active    = TRUE;
-  return sprite;
-}
-
-/** Starts using the sprite the sprite into sprites at the given index. */
-Sprite * sprite_start(int index, int image, int type, int x, int y, 
-                          int health) {
-  Sprite * sprite = sprites + index; 
-  sprite_done(sprite); // Clean up sprite before using.
-  return sprite_startone(sprite, image, type, x, y, health);
-}
-
 
 /** Updates the case of the player sprite. */
 Sprite * sprite_player_update(Sprite * sprite, SDL_Surface * screen) {
@@ -257,9 +299,97 @@ Sprite * sprite_foe_update(Sprite * sprite, SDL_Surface * screen) {
   
 }
 
-/** Updates the case of the extra sprite. */
-Sprite * sprite_extra_update(Sprite * sprite, SDL_Surface * screen) {
+/** Updates the case of the stars. */
+Sprite * sprite_star_update(Sprite * sprite, SDL_Surface * screen) {
   // do nothing yet
+}
+
+/** Updates the case of the explosions. */
+Sprite * sprite_boom_update(Sprite * sprite, SDL_Surface * screen) {
+  // do nothing yet
+  if(sprite_activetime(sprite) > 500) {
+    sprite->active = FALSE;
+  }
+}
+
+
+Sprite * sprite_player_hit(Sprite * self, Sprite * other) {
+  sprites_newboom(self);
+  self->health -= other->health; 
+  if(self->health < 1) { 
+    self->active = FALSE;
+  }
+  return NULL; // do nothing yet
+}
+
+Sprite * sprite_pbullet_hit(Sprite * self, Sprite * other) {
+  self->active = FALSE;
+  return NULL; // do nothing yet
+}
+
+Sprite * sprite_foe_hit(Sprite * self, Sprite * other) {
+  sprites_newboom(self);
+  self->health -= other->health; 
+  if(self->health < 1) { 
+    self->active = FALSE;
+    puts("Foe disabled!");
+  }
+  return NULL; // do nothing yet
+}
+
+Sprite * sprite_fbullet_hit(Sprite * self, Sprite * other) {
+  self->active = FALSE;
+  return NULL; // do nothing yet
+}
+
+
+/** Table that tracks what update function to use for what sprite type  */
+SpriteUpdater * update_table[SpriteTypeLast] = {
+ NULL                   , // SpriteNone
+ sprite_player_update   , // SpritePlayer
+ sprite_bullet_update   , // SpritePlayerBullet
+ sprite_foe_update      , // SpriteFoe
+ sprite_bullet_update   , // SpriteFoeBullet
+ sprite_star_update     , // SpriteStar
+ sprite_boom_update     , // SpriteBoom
+};
+
+/** Table that tracks what collide function to use for what sprite type  */
+SpriteCollider * collide_table[SpriteTypeLast] = {
+ NULL                   , // SpriteNone
+ sprite_player_hit      , // SpritePlayer
+ sprite_pbullet_hit     , // SpritePlayerBullet
+ sprite_foe_hit         , // SpriteFoe
+ sprite_fbullet_hit     , // SpriteFoeBullet
+ NULL                   , // SpriteStar
+ NULL                   , // SpriteBoom
+};
+
+/** Starts using a sprote a single sprite with full options. */
+Sprite * sprite_startone(Sprite * sprite, int image, int type, 
+                         int x, int y, int health) {
+  char filename[SPRITE_FILENAME_MAX];   
+  sprite->image     = image_get(image);
+  if(!sprite->image) return NULL;
+  sprite->box.x     = x;
+  sprite->box.y     = y;
+  sprite->box.w     = sprite->image->w;
+  sprite->box.h     = sprite->image->h;  
+  sprite->health    = health;
+  sprite->type      = type;  
+  sprite->active    = TRUE;
+  sprite->timer     = SDL_GetTicks();
+  sprite->update    = update_table[sprite->type];
+  sprite->hit       = collide_table[sprite->type];
+  return sprite;
+}
+
+/** Starts using the sprite the sprite into sprites at the given index. */
+Sprite * sprite_start(int index, int image, int type, int x, int y, 
+                          int health) {
+  Sprite * sprite = sprites + index; 
+  sprite_done(sprite); // Clean up sprite before using.
+  return sprite_startone(sprite, image, type, x, y, health);
 }
 
 
@@ -268,21 +398,8 @@ Sprite * sprite_update(Sprite * sprite, SDL_Surface * screen) {
   if(!sprite_enabled(sprite)) return NULL;
   sprite->box.x += sprite->speed_x;
   sprite->box.y += sprite->speed_y;  
-  /** Updates the case of the player sprite. */
-  switch(sprite->type) { 
-    case SpritePlayer: 
-      return sprite_player_update(sprite, screen);
-    case SpritePlayerBullet:  
-      return sprite_bullet_update(sprite, screen);
-    case SpriteFoeBullet:
-      return sprite_bullet_update(sprite, screen);
-    case SpriteFoe:
-      return sprite_foe_update(sprite, screen);
-    case SpriteExtra:
-      return sprite_extra_update(sprite, screen);
-    default:
-      return sprite;
-  }  
+  /** Updates the sprite using the update function pointer. */
+  if (sprite->update) sprite->update(sprite, screen); 
 }
 
 /** Updates all enabled sprites. */
@@ -292,39 +409,6 @@ void sprites_update(SDL_Surface * screen) {
      Sprite * sprite = sprites + index;
      sprite_update(sprite, screen);
   }
-}
-
-/** Finds an unused (not active) sprite in the given range. */
-Sprite * sprites_unused(int min, int max) {
-  int index;
-  for(index = min; index <= max; index ++) {
-    Sprite * result = sprites + index;
-    if(!(result->active)) return result;
-  }
-  return NULL;
-}
-
-
-/** Makes a new bullet for the player */
-Sprite * sprites_newplayerbullet(Sprite * player, int health) {
-  int x, y;
-  Sprite * bullet = sprites_unused(SPRITE_PBULLET_MIN, SPRITE_PBULLET_MAX);
-  if(!bullet) return NULL;
-  x = player->box.x + (player->box.w / 2) - (images[IMG_BULLET1_1]->w / 2);
-  y = player->box.y;
-  sprite_startone(bullet, IMG_BULLET1_1, SpritePlayerBullet, x, y, health);
-  bullet->speed_y = -1;
-}
-
-/** Makes a new bullet for a foe */
-Sprite * sprites_newfoebullet(Sprite * foe, int health) {
-  int x, y;
-  Sprite * bullet = sprites_unused(SPRITE_PBULLET_MIN, SPRITE_PBULLET_MAX);
-  if(!bullet) return NULL;
-  x = foe->box.x + (foe->box.w / 2) - (images[IMG_BULLET2_1]->w / 2);
-  y = foe->box.y + foe->box.h;
-  sprite_startone(bullet, IMG_BULLET2_1, SpriteFoeBullet, x, y, health);
-  bullet->speed_y = 1;
 }
 
 
@@ -407,7 +491,24 @@ void handle_foes(Sprite * player) {
 
 int sprite_collide(Sprite * s1, Sprite * s2) {
   int mx1, mx2, my1, my2, r1 ,r2, d2, t2;
-  if (s1->type == s2-> type) return FALSE;
+  if (s1->type == s2->type) return FALSE;
+  if ((!s1->hit) && (!s2->hit)) return FALSE;
+  if (s1->type >= SpriteStar) return FALSE;
+  if (s2->type >= SpriteStar) return FALSE;
+  if ((s1->type == SpritePlayer) && (s2->type == SpritePlayerBullet)) 
+                            return FALSE;
+  if ((s2->type == SpritePlayer) && (s1->type == SpritePlayerBullet)) 
+                            return FALSE;
+  if ((s1->type == SpriteFoe) && (s2->type == SpriteFoeBullet)) 
+                            return FALSE;
+  if ((s2->type == SpriteFoe) && (s1->type == SpriteFoeBullet)) 
+                            return FALSE;
+  if ((s2->type == SpritePlayerBullet) && (s1->type == SpriteFoeBullet)) 
+                            return FALSE;
+  if ((s2->type == SpriteFoeBullet) && (s1->type == SpritePlayerBullet)) 
+                            return FALSE;
+  
+  
   mx1 = s1->box.x + (s1->box.w / 2);
   mx2 = s2->box.x + (s2->box.w / 2);
   my1 = s1->box.y + (s1->box.h / 2);
@@ -417,7 +518,8 @@ int sprite_collide(Sprite * s1, Sprite * s2) {
   d2  = (mx2-mx1)*(mx2-mx1) + (my2-my1)*(my2-my1);
   t2  = (r1+r2)*(r1+r1);
   if(t2 < d2) return FALSE;
-  printf("Collision %d %d! \n", t2, d2);
+  if (s1->hit) s1->hit(s1, s2);
+  if (s2->hit) s2->hit(s2, s1);
   return TRUE;
 }
 
@@ -430,6 +532,7 @@ void handle_collisions(Sprite * player) {
     if (!s1->active) continue;
     for(i2 = i1 + 1 ; i2 < SPRITES_MAX; i2++) {
       s2 = sprites + i2;
+      if (!s1->active) break; //may have gotten deactivated ...
       if (!s2->active) continue;
       sprite_collide(s1, s2);
     }
@@ -475,7 +578,7 @@ int main(void) {
       index < (SPRITE_STAR_MIN + SPRITE_STAR_COUNT); index++) {
     int x = rand() % screen->w;
     int y = rand() % screen->h;
-    Sprite * star = sprite_start(index, IMG_STAR1_1, SpriteExtra, x, y, 1);
+    Sprite * star = sprite_start(index, IMG_STAR1_1, SpriteStar, x, y, 1);
     // star->speed_y = 1;
   }
 
@@ -496,6 +599,11 @@ int main(void) {
     /* Draw all sprites. */
     sprites_draw(screen);
     /* And show the changes. */
+    /* And show game over screen if player 's health is down */
+    if(player->health < 1) {
+      puts("Game over!"); /// make it better than just this.. :p
+      done = TRUE;
+    }
     SDL_Flip(screen);
   }
  
